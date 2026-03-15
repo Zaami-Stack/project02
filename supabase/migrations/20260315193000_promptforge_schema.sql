@@ -93,6 +93,8 @@ alter table if exists public.prompts
   add column if not exists access_session_id uuid references public.access_sessions (id) on delete set null;
 alter table if exists public.prompts
   add column if not exists ip text;
+alter table if exists public.prompts
+  alter column user_id drop not null;
 
 update public.prompts
 set owner_fingerprint = 'legacy'
@@ -111,6 +113,8 @@ alter table if exists public.usage_logs
   add column if not exists access_session_id uuid references public.access_sessions (id) on delete set null;
 alter table if exists public.usage_logs
   add column if not exists access_tier public.plan_tier default 'free';
+alter table if exists public.usage_logs
+  alter column user_id drop not null;
 
 update public.usage_logs
 set access_tier = 'free'
