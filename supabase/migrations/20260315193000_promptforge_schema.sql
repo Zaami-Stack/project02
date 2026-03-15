@@ -1,8 +1,43 @@
 create extension if not exists pgcrypto;
 
-create type public.plan_tier as enum ('free', 'pro');
-create type public.usage_status as enum ('in_progress', 'completed', 'failed', 'blocked');
-create type public.access_session_status as enum ('active', 'revoked', 'expired');
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_type t
+    join pg_namespace n on n.oid = t.typnamespace
+    where t.typname = 'plan_tier'
+      and n.nspname = 'public'
+  ) then
+    create type public.plan_tier as enum ('free', 'pro');
+  end if;
+end $$;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_type t
+    join pg_namespace n on n.oid = t.typnamespace
+    where t.typname = 'usage_status'
+      and n.nspname = 'public'
+  ) then
+    create type public.usage_status as enum ('in_progress', 'completed', 'failed', 'blocked');
+  end if;
+end $$;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_type t
+    join pg_namespace n on n.oid = t.typnamespace
+    where t.typname = 'access_session_status'
+      and n.nspname = 'public'
+  ) then
+    create type public.access_session_status as enum ('active', 'revoked', 'expired');
+  end if;
+end $$;
 
 create table if not exists public.access_codes (
   id uuid primary key default gen_random_uuid(),
@@ -51,6 +86,38 @@ create table if not exists public.usage_logs (
   failure_reason text,
   created_at timestamptz not null default timezone('utc', now())
 );
+
+alter table if exists public.prompts
+  add column if not exists owner_fingerprint text;
+alter table if exists public.prompts
+  add column if not exists access_session_id uuid references public.access_sessions (id) on delete set null;
+alter table if exists public.prompts
+  add column if not exists ip text;
+
+update public.prompts
+set owner_fingerprint = 'legacy'
+where owner_fingerprint is null;
+
+update public.prompts
+set ip = '0.0.0.0'
+where ip is null;
+
+alter table if exists public.prompts
+  alter column owner_fingerprint set not null;
+alter table if exists public.prompts
+  alter column ip set not null;
+
+alter table if exists public.usage_logs
+  add column if not exists access_session_id uuid references public.access_sessions (id) on delete set null;
+alter table if exists public.usage_logs
+  add column if not exists access_tier public.plan_tier default 'free';
+
+update public.usage_logs
+set access_tier = 'free'
+where access_tier is null;
+
+alter table if exists public.usage_logs
+  alter column access_tier set not null;
 
 create index if not exists access_codes_active_idx on public.access_codes (is_active, expires_at);
 create index if not exists access_sessions_token_hash_idx on public.access_sessions (token_hash);
@@ -307,4 +374,3 @@ revoke all on function public.begin_prompt_generation(text, text, text, text) fr
 grant execute on function public.hash_access_code(text) to service_role;
 grant execute on function public.claim_access_code(text, text, text, text, text) to service_role;
 grant execute on function public.begin_prompt_generation(text, text, text, text) to service_role;
-
