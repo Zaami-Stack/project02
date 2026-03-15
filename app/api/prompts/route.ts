@@ -1,20 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { promptRequestSchema } from "@/api/contracts";
+import { getAccessContext } from "@/lib/access";
 import { UsageLimitError } from "@/lib/errors";
-import { getCurrentUser } from "@/lib/auth";
-import { generatePremiumPrompt, getUserProfile } from "@/lib/prompts";
+import { generatePremiumPrompt } from "@/lib/prompts";
 import { getRequestIp, getUserAgent } from "@/lib/request";
 
 export async function POST(request: Request) {
   try {
-    const user = await getCurrentUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
-    }
-
-    const profile = await getUserProfile(user.id);
     const body = await request.json();
     const parsed = promptRequestSchema.safeParse(body);
 
@@ -22,13 +15,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid prompt payload." }, { status: 400 });
     }
 
+    const access = await getAccessContext();
+
     const payload = await generatePremiumPrompt({
-      userId: user.id,
       inputPrompt: parsed.data.prompt,
       fingerprint: parsed.data.fingerprint,
       ipAddress: getRequestIp(),
       userAgent: getUserAgent(),
-      priority: profile.plan === "pro"
+      accessTokenHash: access.accessTokenHash
     });
 
     return NextResponse.json(payload);

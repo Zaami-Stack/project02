@@ -24,8 +24,8 @@ export function HeroSection() {
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">
               <Button size="lg" asChild>
-                <Link href="/signup">
-                  Start building free
+                <Link href="/dashboard">
+                  Start in dashboard
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -36,8 +36,8 @@ export function HeroSection() {
             <div className="grid gap-3 sm:grid-cols-3">
               {[
                 "10 secure free upgrades daily",
-                "History, favorites, and billing",
-                "Supabase auth and server-side limits"
+                "History and favorites on your device",
+                "Code-based Pro unlock with PayPal"
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-background/70 px-4 py-3">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
@@ -70,4 +70,3 @@ export function HeroSection() {
     </section>
   );
 }
-

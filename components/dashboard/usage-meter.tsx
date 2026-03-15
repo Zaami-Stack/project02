@@ -36,11 +36,10 @@ export function UsageMeter({ usage }: { usage: UsageSummary }) {
         </div>
         <p className="text-sm leading-6 text-muted-foreground">
           {usage.plan === "pro"
-            ? "Unlimited generations are enabled, with priority routing for premium subscribers."
+            ? "Unlimited generations are enabled, with priority routing for Pro code holders."
             : `${usage.remaining ?? 0} of your ${FREE_DAILY_LIMIT} secure daily prompt upgrades remain.`}
         </p>
       </CardContent>
     </Card>
   );
 }
-

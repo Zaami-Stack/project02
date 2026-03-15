@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { usePromptStore } from "@/hooks/use-prompt-store";
 import { BillingCard } from "@/components/dashboard/billing-card";
@@ -9,42 +10,140 @@ import { PromptWorkbench } from "@/components/dashboard/prompt-workbench";
 import { UsageMeter } from "@/components/dashboard/usage-meter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { PromptGenerationResponse, PromptRecord, UsageSummary, UserProfile } from "@/lib/types";
+import { FREE_DAILY_LIMIT } from "@/lib/constants";
+import type {
+  AccessStatus,
+  PromptGenerationResponse,
+  PromptHistoryResponse,
+  PromptRecord,
+  UsageSummary
+} from "@/lib/types";
+import { createBrowserFingerprint } from "@/utils/fingerprint";
 
-export function DashboardShell({
-  profile,
-  initialHistory,
-  initialUsage
-}: {
-  profile: UserProfile;
-  initialHistory: PromptRecord[];
-  initialUsage: UsageSummary;
-}) {
-  const [history, setHistory] = useState(initialHistory);
-  const [usage, setUsage] = useState(initialUsage);
+const INITIAL_USAGE: UsageSummary = {
+  usedToday: 0,
+  dailyLimit: FREE_DAILY_LIMIT,
+  remaining: FREE_DAILY_LIMIT,
+  plan: "free"
+};
+
+const INITIAL_ACCESS: Omit<AccessStatus, "usage"> = {
+  plan: "free",
+  hasActiveCode: false,
+  codeLabel: null,
+  expiresAt: null,
+  paypalUrl: "https://paypal.me/AnasZaami"
+};
+
+export function DashboardShell() {
+  const [fingerprint, setFingerprint] = useState<string | null>(null);
+  const [history, setHistory] = useState<PromptRecord[]>([]);
+  const [usage, setUsage] = useState<UsageSummary>(INITIAL_USAGE);
+  const [access, setAccess] = useState(INITIAL_ACCESS);
+  const [isBootstrapping, setIsBootstrapping] = useState(true);
   const { activePrompt, setActivePrompt, setUsage: setStoreUsage } = usePromptStore();
 
+  const loadDashboardData = useCallback(
+    async (targetFingerprint: string) => {
+      const [statusResponse, historyResponse] = await Promise.all([
+        fetch(`/api/access/status?fingerprint=${encodeURIComponent(targetFingerprint)}`, {
+          cache: "no-store"
+        }),
+        fetch(`/api/prompts/history?fingerprint=${encodeURIComponent(targetFingerprint)}`, {
+          cache: "no-store"
+        })
+      ]);
+
+      const statusPayload = (await statusResponse.json()) as AccessStatus | { error: string };
+      const historyPayload = (await historyResponse.json()) as PromptHistoryResponse | { error: string };
+
+      if (!statusResponse.ok || "error" in statusPayload) {
+        throw new Error("error" in statusPayload ? statusPayload.error : "Unable to load access status.");
+      }
+
+      if (!historyResponse.ok || "error" in historyPayload) {
+        throw new Error("error" in historyPayload ? historyPayload.error : "Unable to load prompt history.");
+      }
+
+      setUsage(statusPayload.usage);
+      setStoreUsage(statusPayload.usage);
+      setAccess({
+        plan: statusPayload.plan,
+        hasActiveCode: statusPayload.hasActiveCode,
+        codeLabel: statusPayload.codeLabel,
+        expiresAt: statusPayload.expiresAt,
+        paypalUrl: statusPayload.paypalUrl
+      });
+      setHistory(historyPayload.history);
+
+      setActivePrompt(historyPayload.history[0] ?? null);
+    },
+    [setActivePrompt, setStoreUsage]
+  );
+
   useEffect(() => {
-    setStoreUsage(initialUsage);
-
-    if (!activePrompt && initialHistory.length > 0) {
-      setActivePrompt(initialHistory[0]);
+    if (activePrompt && !history.some((item) => item.id === activePrompt.id)) {
+      setActivePrompt(history[0] ?? null);
     }
-  }, [activePrompt, initialHistory, initialUsage, setActivePrompt, setStoreUsage]);
+  }, [activePrompt, history, setActivePrompt]);
 
-  function handlePromptGenerated(payload: PromptGenerationResponse) {
+  useEffect(() => {
+    let mounted = true;
+
+    async function bootstrap() {
+      try {
+        const generatedFingerprint = await createBrowserFingerprint();
+
+        if (!mounted) {
+          return;
+        }
+
+        setFingerprint(generatedFingerprint);
+        await loadDashboardData(generatedFingerprint);
+      } catch (error) {
+        if (mounted) {
+          toast.error(error instanceof Error ? error.message : "Unable to initialize the dashboard.");
+        }
+      } finally {
+        if (mounted) {
+          setIsBootstrapping(false);
+        }
+      }
+    }
+
+    bootstrap();
+
+    return () => {
+      mounted = false;
+    };
+  }, [loadDashboardData]);
+
+  async function handlePromptGenerated(payload: PromptGenerationResponse) {
     setHistory((current) => [payload.prompt, ...current.filter((item) => item.id !== payload.prompt.id)]);
     setUsage(payload.usage);
     setStoreUsage(payload.usage);
+
+    setAccess((current) => ({
+      ...current,
+      plan: payload.usage.plan,
+      hasActiveCode: payload.usage.plan === "pro" ? current.hasActiveCode : false
+    }));
   }
 
   async function handleToggleFavorite(promptId: string, isFavorite: boolean) {
+    if (!fingerprint) {
+      throw new Error("Secure fingerprint still loading.");
+    }
+
     const response = await fetch(`/api/prompts/${promptId}/favorite`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ isFavorite })
+      body: JSON.stringify({
+        isFavorite,
+        fingerprint
+      })
     });
 
     const payload = (await response.json()) as { success?: boolean; error?: string };
@@ -62,6 +161,14 @@ export function DashboardShell({
     }
   }
 
+  async function handleAccessChanged() {
+    if (!fingerprint) {
+      return;
+    }
+
+    await loadDashboardData(fingerprint);
+  }
+
   return (
     <div className="space-y-8">
       <section className="section-shell overflow-hidden">
@@ -73,31 +180,46 @@ export function DashboardShell({
             <div className="space-y-3">
               <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">Build premium prompts on demand.</h1>
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                Start with a rough idea, then refine, save, favorite, and reuse your strongest prompts from one secure dashboard.
+                No account required. Use free mode instantly, then unlock unlimited Pro access with your private code.
               </p>
             </div>
           </div>
           <div className="rounded-[24px] border border-border/70 bg-background/70 p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Signed in as</p>
-            <p className="mt-2 text-lg font-semibold">{profile.email}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Device status</p>
+            <p className="mt-2 text-lg font-semibold">
+              {isBootstrapping ? "Initializing secure session..." : access.plan === "pro" ? "Pro unlocked" : "Free mode"}
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {fingerprint ? "Device fingerprint verified." : "Preparing secure fingerprint."}
+            </p>
             <div className="mt-4 flex flex-wrap gap-3">
               <Button variant="outline" asChild>
                 <a href="#history">View history</a>
               </Button>
               <Button variant="ghost" asChild>
-                <a href="#billing">Manage plan</a>
+                <a href="#billing">Manage Pro access</a>
               </Button>
             </div>
           </div>
         </div>
       </section>
+
       <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
-        <PromptWorkbench onPromptGenerated={handlePromptGenerated} />
+        <PromptWorkbench fingerprint={fingerprint} onPromptGenerated={handlePromptGenerated} />
         <div className="space-y-8">
           <UsageMeter usage={usage} />
-          <BillingCard profile={profile} />
+          <BillingCard
+            plan={access.plan}
+            hasActiveCode={access.hasActiveCode}
+            codeLabel={access.codeLabel}
+            expiresAt={access.expiresAt}
+            paypalUrl={access.paypalUrl}
+            fingerprint={fingerprint}
+            onAccessChanged={handleAccessChanged}
+          />
         </div>
       </div>
+
       <PromptHistoryList
         history={history}
         activePromptId={activePrompt?.id ?? null}

@@ -6,33 +6,34 @@ import { SectionReveal } from "@/components/landing/section-reveal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { FREE_DAILY_LIMIT, PRO_MONTHLY_PRICE } from "@/lib/constants";
+import { FREE_DAILY_LIMIT, PAYPAL_ME_URL, PRO_MONTHLY_PRICE } from "@/lib/constants";
 
 const plans: Array<{
   name: string;
   price: string;
   description: string;
   cta: string;
-  href: Route;
+  href?: Route;
+  externalHref?: string;
   featured?: boolean;
   items: string[];
 }> = [
   {
     name: "Free",
     price: "$0",
-    description: "Explore the workflow with secure daily limits.",
-    cta: "Create free account",
-    href: "/signup",
-    items: [`${FREE_DAILY_LIMIT} prompt upgrades per day`, "Prompt history", "Favorites", "Secure auth"]
+    description: "Start instantly with secure daily limits and no account setup.",
+    cta: "Open free dashboard",
+    href: "/dashboard",
+    items: [`${FREE_DAILY_LIMIT} prompt upgrades per day`, "Prompt history", "Favorites", "Device-based access"]
   },
   {
     name: "Pro",
     price: `$${PRO_MONTHLY_PRICE}`,
-    description: "For builders who generate at full speed.",
-    cta: "Upgrade to Pro",
-    href: "/signup",
+    description: "Buy once monthly, receive a private access code, unlock instantly.",
+    cta: "Buy Pro code",
+    externalHref: PAYPAL_ME_URL,
     featured: true,
-    items: ["Unlimited prompt upgrades", "Priority generation", "Billing portal", "Everything in Free"]
+    items: ["Unlimited prompt upgrades", "Priority generation", "Code-based unlock", "Everything in Free"]
   }
 ];
 
@@ -44,10 +45,10 @@ export function PricingSection() {
           <div className="mx-auto max-w-2xl space-y-4 text-center">
             <Badge className="mx-auto">Simple pricing</Badge>
             <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
-              Start free, upgrade when PromptForge becomes part of your workflow.
+              Start free now, unlock Pro with a private code when ready.
             </h2>
             <p className="text-lg leading-8 text-muted-foreground">
-              One subscription tier, no confusing usage bundles, and clean server-side enforcement for fairness.
+              Free works instantly. Pro is activated after PayPal payment using your private access code.
             </p>
           </div>
         </SectionReveal>
@@ -75,9 +76,17 @@ export function PricingSection() {
                   ))}
                 </CardContent>
                 <CardFooter>
-                  <Button asChild size="lg" variant={plan.featured ? "default" : "outline"} className="w-full">
-                    <Link href={plan.href}>{plan.cta}</Link>
-                  </Button>
+                  {plan.externalHref ? (
+                    <Button asChild size="lg" variant={plan.featured ? "default" : "outline"} className="w-full">
+                      <a href={plan.externalHref} target="_blank" rel="noreferrer">
+                        {plan.cta}
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button asChild size="lg" variant={plan.featured ? "default" : "outline"} className="w-full">
+                      <Link href={plan.href!}>{plan.cta}</Link>
+                    </Button>
+                  )}
                 </CardFooter>
               </Card>
             </SectionReveal>

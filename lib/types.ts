@@ -1,15 +1,7 @@
 export type PlanTier = "free" | "pro";
 
-export type UserProfile = {
-  id: string;
-  email: string;
-  plan: PlanTier;
-  created_at: string;
-};
-
 export type PromptRecord = {
   id: string;
-  user_id: string;
   input_prompt: string;
   generated_prompt: string;
   is_favorite: boolean;
@@ -28,3 +20,15 @@ export type PromptGenerationResponse = {
   usage: UsageSummary;
 };
 
+export type AccessStatus = {
+  plan: PlanTier;
+  hasActiveCode: boolean;
+  codeLabel: string | null;
+  expiresAt: string | null;
+  usage: UsageSummary;
+  paypalUrl: string;
+};
+
+export type PromptHistoryResponse = {
+  history: PromptRecord[];
+};

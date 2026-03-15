@@ -1,11 +1,10 @@
 import { revalidatePath } from "next/cache";
 
-import { FREE_DAILY_LIMIT, PROMPT_ENGINEERING_SYSTEM_MESSAGE } from "@/lib/constants";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { DEFAULT_OPENAI_MODEL } from "@/lib/constants";
+import { DEFAULT_OPENAI_MODEL, FREE_DAILY_LIMIT, PROMPT_ENGINEERING_SYSTEM_MESSAGE } from "@/lib/constants";
 import { UsageLimitError } from "@/lib/errors";
 import { getOpenAIClient } from "@/lib/openai";
-import type { PlanTier, PromptGenerationResponse, PromptRecord, UsageSummary, UserProfile } from "@/lib/types";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import type { PlanTier, PromptGenerationResponse, PromptRecord, UsageSummary } from "@/lib/types";
 
 type BeginPromptGenerationResult = {
   allowed: boolean;
@@ -14,31 +13,30 @@ type BeginPromptGenerationResult = {
   used_today: number;
   daily_limit: number | null;
   reason: string | null;
+  access_session_id: string | null;
 };
 
-export async function getUserProfile(userId: string) {
+export async function getPromptHistory({
+  fingerprint,
+  accessSessionId
+}: {
+  fingerprint: string;
+  accessSessionId: string | null;
+}) {
   const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("users")
-    .select("id, email, plan, created_at")
-    .eq("id", userId)
-    .single();
+  let query = supabase
+    .from("prompts")
+    .select("id, input_prompt, generated_prompt, is_favorite, created_at")
+    .order("created_at", { ascending: false })
+    .limit(40);
 
-  if (error) {
-    throw new Error(`Unable to load user profile: ${error.message}`);
+  if (accessSessionId) {
+    query = query.or(`owner_fingerprint.eq.${fingerprint},access_session_id.eq.${accessSessionId}`);
+  } else {
+    query = query.eq("owner_fingerprint", fingerprint);
   }
 
-  return data as UserProfile;
-}
-
-export async function getPromptHistory(userId: string) {
-  const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("prompts")
-    .select("id, user_id, input_prompt, generated_prompt, is_favorite, created_at")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(30);
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(`Unable to load prompt history: ${error.message}`);
@@ -47,54 +45,67 @@ export async function getPromptHistory(userId: string) {
   return (data ?? []) as PromptRecord[];
 }
 
-export async function getUsageSummary(userId: string, plan?: PlanTier) {
-  const profile = plan ? ({ plan } as Pick<UserProfile, "plan">) : await getUserProfile(userId);
+export async function getUsageSummary({
+  fingerprint,
+  plan,
+  accessSessionId
+}: {
+  fingerprint: string;
+  plan: PlanTier;
+  accessSessionId: string | null;
+}) {
   const supabase = createSupabaseAdminClient();
   const now = new Date();
   const utcDayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  const { count, error } = await supabase
+
+  let query = supabase
     .from("usage_logs")
     .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
     .eq("status", "completed")
     .gte("created_at", utcDayStart.toISOString());
+
+  if (plan === "pro" && accessSessionId) {
+    query = query.eq("access_session_id", accessSessionId);
+  } else {
+    query = query.eq("fingerprint", fingerprint);
+  }
+
+  const { count, error } = await query;
 
   if (error) {
     throw new Error(`Unable to load usage summary: ${error.message}`);
   }
 
   const usedToday = count ?? 0;
-  const dailyLimit = profile.plan === "pro" ? null : FREE_DAILY_LIMIT;
+  const dailyLimit = plan === "pro" ? null : FREE_DAILY_LIMIT;
 
   return {
     usedToday,
     dailyLimit,
     remaining: dailyLimit === null ? null : Math.max(dailyLimit - usedToday, 0),
-    plan: profile.plan
+    plan
   } satisfies UsageSummary;
 }
 
 export async function generatePremiumPrompt({
-  userId,
   inputPrompt,
   fingerprint,
   ipAddress,
   userAgent,
-  priority = false
+  accessTokenHash
 }: {
-  userId: string;
   inputPrompt: string;
   fingerprint: string;
   ipAddress: string;
   userAgent: string;
-  priority?: boolean;
+  accessTokenHash: string | null;
 }): Promise<PromptGenerationResponse> {
   const supabase = createSupabaseAdminClient();
 
   const { data: beginResult, error: beginError } = await supabase.rpc("begin_prompt_generation", {
-    p_user_id: userId,
     p_ip: ipAddress,
     p_fingerprint: fingerprint,
+    p_access_token_hash: accessTokenHash,
     p_user_agent: userAgent
   });
 
@@ -114,7 +125,7 @@ export async function generatePremiumPrompt({
   try {
     const completion = await openai.chat.completions.create({
       model: DEFAULT_OPENAI_MODEL,
-      temperature: priority ? 0.55 : 0.7,
+      temperature: usageGate.plan === "pro" ? 0.55 : 0.7,
       messages: [
         {
           role: "system",
@@ -136,11 +147,13 @@ export async function generatePremiumPrompt({
     const { data: promptRow, error: promptError } = await supabase
       .from("prompts")
       .insert({
-        user_id: userId,
+        owner_fingerprint: fingerprint,
+        access_session_id: usageGate.access_session_id,
+        ip: ipAddress,
         input_prompt: inputPrompt,
         generated_prompt: generatedPrompt
       })
-      .select("id, user_id, input_prompt, generated_prompt, is_favorite, created_at")
+      .select("id, input_prompt, generated_prompt, is_favorite, created_at")
       .single();
 
     if (promptError) {
@@ -190,20 +203,38 @@ export async function generatePremiumPrompt({
 
 export async function setPromptFavorite({
   promptId,
-  userId,
+  fingerprint,
+  accessSessionId,
   isFavorite
 }: {
   promptId: string;
-  userId: string;
+  fingerprint: string;
+  accessSessionId: string | null;
   isFavorite: boolean;
 }) {
   const supabase = createSupabaseAdminClient();
-
-  const { error } = await supabase
+  const { data: promptRow, error: promptError } = await supabase
     .from("prompts")
-    .update({ is_favorite: isFavorite })
+    .select("id, owner_fingerprint, access_session_id")
     .eq("id", promptId)
-    .eq("user_id", userId);
+    .maybeSingle();
+
+  if (promptError) {
+    throw new Error(`Unable to load prompt record: ${promptError.message}`);
+  }
+
+  if (!promptRow) {
+    throw new Error("Prompt not found.");
+  }
+
+  const ownsByFingerprint = promptRow.owner_fingerprint === fingerprint;
+  const ownsByCodeSession = Boolean(accessSessionId && promptRow.access_session_id === accessSessionId);
+
+  if (!ownsByFingerprint && !ownsByCodeSession) {
+    throw new Error("You do not have permission to modify this prompt.");
+  }
+
+  const { error } = await supabase.from("prompts").update({ is_favorite: isFavorite }).eq("id", promptId);
 
   if (error) {
     throw new Error(`Unable to update favorite status: ${error.message}`);
@@ -212,28 +243,3 @@ export async function setPromptFavorite({
   revalidatePath("/dashboard");
 }
 
-export async function syncUserPlanFromSubscription(userId: string) {
-  const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("subscriptions")
-    .select("status, plan")
-    .eq("user_id", userId)
-    .in("status", ["active", "trialing", "past_due"])
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (error) {
-    throw new Error(`Unable to sync user plan: ${error.message}`);
-  }
-
-  const plan: PlanTier = data?.plan === "pro" ? "pro" : "free";
-
-  const { error: profileError } = await supabase.from("users").update({ plan }).eq("id", userId);
-
-  if (profileError) {
-    throw new Error(`Unable to update user plan: ${profileError.message}`);
-  }
-
-  return plan;
-}

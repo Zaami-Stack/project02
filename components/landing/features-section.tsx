@@ -33,7 +33,7 @@ const features = [
   {
     icon: Rocket,
     title: "Ready for Vercel",
-    description: "Deploy with environment variables, Supabase SQL migrations, and Stripe billing configuration."
+    description: "Deploy with environment variables, Supabase SQL migration, and your PayPal + code fulfillment flow."
   }
 ] as const;
 
@@ -73,4 +73,3 @@ export function FeaturesSection() {
     </section>
   );
 }
-

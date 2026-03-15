@@ -2,6 +2,7 @@ export const APP_NAME = "PromptForge AI";
 export const APP_TAGLINE = "Turn rough ideas into premium prompts that ship serious AI outcomes.";
 export const FREE_DAILY_LIMIT = 10;
 export const PRO_MONTHLY_PRICE = 10;
+export const PAYPAL_ME_URL = "https://paypal.me/AnasZaami";
 export const DEFAULT_OPENAI_MODEL = process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
 
 export const PROMPT_ENGINEERING_SYSTEM_MESSAGE = `
@@ -33,12 +34,17 @@ export const FAQ_ITEMS = [
   {
     question: "How are free and pro plans different?",
     answer:
-      "Free accounts get 10 secure server-enforced generations per day. Pro removes the daily cap and receives priority generation routing."
+      "Free mode gets 10 secure server-enforced generations per day. Pro access codes remove the daily cap and receive priority generation routing."
   },
   {
-    question: "Can I save prompts and revisit them later?",
+    question: "How do I unlock Pro without creating an account?",
     answer:
-      "Yes. Every generation is stored in your account history, and you can mark favorite prompts for quick reuse."
+      "Buy Pro through the PayPal link, receive your private access code, then redeem it inside the dashboard."
+  },
+  {
+    question: "Can I save prompts and revisit them on this device?",
+    answer:
+      "Yes. Prompt history and favorites are saved for your device fingerprint and active code session."
   },
   {
     question: "How does abuse protection work?",
@@ -46,4 +52,3 @@ export const FAQ_ITEMS = [
       "PromptForge combines account limits with IP checks, browser fingerprinting, server-side validation, and database-enforced rate controls."
   }
 ] as const;
-

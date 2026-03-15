@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Logo } from "@/components/logo";
+import { PAYPAL_ME_URL } from "@/lib/constants";
 
 export function SiteFooter() {
   return (
@@ -17,8 +18,11 @@ export function SiteFooter() {
           <Link href="#faq" className="transition hover:text-foreground">
             FAQ
           </Link>
-          <Link href="/login" className="transition hover:text-foreground">
-            Login
+          <a href={PAYPAL_ME_URL} target="_blank" rel="noreferrer" className="transition hover:text-foreground">
+            Buy Pro Code
+          </a>
+          <Link href="/dashboard" className="transition hover:text-foreground">
+            Dashboard
           </Link>
         </div>
       </div>

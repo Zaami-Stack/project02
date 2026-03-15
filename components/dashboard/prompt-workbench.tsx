@@ -10,12 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { createBrowserFingerprint } from "@/utils/fingerprint";
 import type { PromptGenerationResponse } from "@/lib/types";
 
 export function PromptWorkbench({
+  fingerprint,
   onPromptGenerated
 }: {
+  fingerprint: string | null;
   onPromptGenerated: (payload: PromptGenerationResponse) => void;
 }) {
   const { input, setInput, activePrompt, isGenerating, setGenerating, setActivePrompt, resetOutput } = usePromptStore();
@@ -32,7 +33,10 @@ export function PromptWorkbench({
     resetOutput();
 
     try {
-      const fingerprint = await createBrowserFingerprint();
+      if (!fingerprint) {
+        throw new Error("Preparing your secure device session. Please try again in a second.");
+      }
+
       const response = await fetch("/api/prompts", {
         method: "POST",
         headers: {
@@ -135,4 +139,3 @@ export function PromptWorkbench({
     </Card>
   );
 }
-

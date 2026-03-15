@@ -1,36 +1,28 @@
 # PromptForge AI
 
-PromptForge AI is a production-ready SaaS web app that upgrades a short prompt into a premium, structured prompt optimized for modern AI systems.
+PromptForge AI is a production-ready SaaS app that upgrades simple prompts into premium, structured prompts for modern AI models.
 
-## What it includes
+This version uses:
+- No account system
+- Free mode for everyone (10 prompts/day)
+- Pro unlock via private access codes
+- PayPal payment link (`paypal.me/AnasZaami`)
 
-- Next.js 14 App Router + TypeScript
-- Tailwind CSS + shadcn-style UI primitives
-- Supabase Auth, Postgres, RLS, and SQL migration
-- Secure server-side prompt generation with OpenAI
-- Stripe subscription checkout, portal, and webhook sync
-- Free tier daily limits with IP + fingerprint abuse protection
-- Prompt history, favorites, copy actions, loading states, and dark mode
-- Vercel-ready deployment flow
+## Stack
 
-## Core product flow
+- Next.js 14 + TypeScript
+- Tailwind CSS + shadcn-style UI
+- Supabase Postgres (service-role backend usage)
+- OpenAI API
+- Vercel deployment
 
-1. User signs up with Supabase Auth.
-2. User enters a simple prompt in the dashboard.
-3. The backend validates the request and checks secure usage limits in Postgres.
-4. OpenAI returns an upgraded premium prompt.
-5. The generated prompt is stored in Supabase and shown in history.
-6. Free users are capped at 10 prompt upgrades per UTC day.
-7. Pro users upgrade through Stripe and receive unlimited generations.
+## Main flow
 
-## Tech stack
-
-- Frontend: Next.js 14, TypeScript, Tailwind CSS
-- UI: shadcn-style components, Framer Motion, Sonner, Zustand
-- Backend: Supabase Auth, Supabase Postgres, Supabase RLS
-- AI: OpenAI API
-- Billing: Stripe subscriptions
-- Deployment: Vercel
+1. User opens `/dashboard` directly.
+2. User gets free mode automatically.
+3. User enters a prompt and gets premium output.
+4. If user buys Pro, they receive a private code from you.
+5. User redeems code in dashboard and gets unlimited usage on that device.
 
 ## Project structure
 
@@ -47,7 +39,7 @@ supabase/
 
 ## Environment variables
 
-Copy `.env.example` to `.env.local` and fill in:
+Copy `.env.example` to `.env.local` and set:
 
 ```bash
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -56,10 +48,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE=
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-STRIPE_PRO_PRICE_ID=
 ```
+
+Notes:
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` is kept for compatibility, but this app uses secure server routes for DB writes.
+- `SUPABASE_SERVICE_ROLE` must never be exposed client-side.
 
 ## Local development
 
@@ -68,102 +61,72 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
 ## Supabase setup
 
 1. Create a Supabase project.
-2. Enable email/password authentication in Supabase Auth.
-3. Run the SQL migration in [`supabase/migrations/20260315193000_promptforge_schema.sql`](./supabase/migrations/20260315193000_promptforge_schema.sql).
-4. Confirm the following tables exist:
-   - `users`
+2. Open SQL editor and run:
+   - `supabase/migrations/20260315193000_promptforge_schema.sql`
+3. Confirm tables exist:
+   - `access_codes`
+   - `access_sessions`
    - `prompts`
    - `usage_logs`
-   - `subscriptions`
-5. Confirm the `begin_prompt_generation` function exists.
-6. Confirm Row Level Security is enabled on the app tables.
+4. Confirm functions exist:
+   - `hash_access_code`
+   - `claim_access_code`
+   - `begin_prompt_generation`
 
-### Migration options
+## Create Pro access codes
 
-- Supabase SQL Editor: paste the migration SQL and run it
-- Supabase CLI:
+Run SQL like this in Supabase:
 
-```bash
-supabase db push
+```sql
+insert into public.access_codes (
+  code_hash,
+  code_label,
+  max_activations
+)
+values (
+  public.hash_access_code('ANAS-PRO-001'),
+  'Customer 001',
+  1
+);
 ```
 
-## Stripe setup
+Tips:
+- Set `max_activations = 1` for one-device code.
+- Leave it `null` for reusable code.
+- Disable any code with `is_active = false`.
 
-1. Create a Stripe product for PromptForge Pro at `$10/month`.
-2. Copy the recurring price ID into `STRIPE_PRO_PRICE_ID`.
-3. Add a webhook endpoint:
-   - Default Vercel route: `https://your-domain.com/api/stripe/webhook`
-   - Optional Supabase Edge Function: `https://<project-ref>.functions.supabase.co/stripe-webhook`
-4. Subscribe the webhook to:
-   - `checkout.session.completed`
-   - `customer.subscription.created`
-   - `customer.subscription.updated`
-   - `customer.subscription.deleted`
-5. Copy the webhook signing secret into `STRIPE_WEBHOOK_SECRET`.
+## PayPal flow
 
-## Supabase Edge Function option
+- Public payment link is in code: `https://paypal.me/AnasZaami`
+- After payment, you manually send the private code.
+- User redeems code in dashboard.
 
-An optional Stripe webhook handler is included at [`supabase/functions/stripe-webhook/index.ts`](./supabase/functions/stripe-webhook/index.ts).
+## Security model
 
-Deploy it with:
+- Free limit is enforced server-side in Postgres function `begin_prompt_generation`
+- Access codes are hashed in DB (`sha256`)
+- Pro session uses secure HTTP-only cookie token
+- Usage tracking includes IP + fingerprint + access session id
+- No client-side trust for plan upgrades
 
-```bash
-supabase functions deploy stripe-webhook --no-verify-jwt
-```
+## Deploy to Vercel
 
-Set these Supabase function secrets:
-
-```bash
-SUPABASE_URL
-SUPABASE_SERVICE_ROLE_KEY
-STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET
-```
-
-## OpenAI setup
-
-1. Create an OpenAI API key.
-2. Add it to `OPENAI_API_KEY`.
-3. Optionally override `OPENAI_MODEL` if you want a different compatible model.
-
-## Usage limit and abuse protection
-
-Free plan protections are enforced on the server side:
-
-- 10 successful or in-progress prompt upgrades per UTC day
-- IP hourly safety threshold
-- IP daily safety threshold
-- Browser fingerprint multi-account threshold
-- Supabase-backed usage logging
-- No client-side trust for plan checks
-
-All prompt attempts are tracked in `usage_logs`, and limits are enforced by the Postgres function `begin_prompt_generation`.
-
-## Deployment to Vercel
-
-1. Push this repository to GitHub.
-2. Import the repository into Vercel.
-3. Add the environment variables listed above.
+1. Push repo to GitHub.
+2. Import repo in Vercel.
+3. Add env vars above.
 4. Deploy.
-5. Configure the Stripe webhook to point to your deployed URL.
+5. Set `NEXT_PUBLIC_APP_URL` to your production domain (for example `https://project02.vercel.app`).
 
-## Important implementation notes
+## Routes
 
-- The app uses server route handlers for prompt generation and billing.
-- Stripe subscription state is synchronized into Supabase and then mirrored into `users.plan`.
-- Prompt history and favorites are stored in the `prompts` table.
-- The dashboard is protected with Supabase session middleware.
-- The landing page, auth flow, and dashboard all support dark mode.
-
-## Recommended post-deploy follow-ups
-
-- Add email verification templates in Supabase Auth
-- Add observability for prompt failures and Stripe webhook retries
-- Add analytics dashboards for prompt volume and conversion rate
-- Add tests for route handlers and DB functions if you want CI enforcement
+- `GET /dashboard` -> main app
+- `POST /api/prompts` -> generate premium prompt
+- `GET /api/prompts/history` -> load history by fingerprint/session
+- `PATCH /api/prompts/[id]/favorite` -> toggle favorites
+- `GET /api/access/status` -> free/pro status
+- `POST /api/access/redeem` -> redeem private code
+- `POST /api/access/revoke` -> remove Pro from current device
 
