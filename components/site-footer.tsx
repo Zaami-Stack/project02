@@ -9,6 +9,9 @@ export function SiteFooter() {
       <div className="container flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <Logo className="w-fit" />
         <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground">
+          <Link href="#editions" className="transition-colors hover:text-foreground">
+            Editions
+          </Link>
           <Link href="#features" className="transition-colors hover:text-foreground">
             Features
           </Link>

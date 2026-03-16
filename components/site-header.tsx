@@ -11,6 +11,9 @@ export function SiteHeader() {
       <div className="container flex h-16 items-center justify-between gap-4">
         <Logo />
         <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
+          <Link href="/#editions" className="transition-colors hover:text-foreground">
+            Editions
+          </Link>
           <Link href="/#features" className="transition-colors hover:text-foreground">
             Features
           </Link>
