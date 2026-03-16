@@ -43,6 +43,9 @@ Copy `.env.example` to `.env.local` and set:
 
 ```bash
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=
+NEXT_PUBLIC_ADSENSE_SLOT_HOME_TOP=
+NEXT_PUBLIC_ADSENSE_SLOT_HOME_MIDDLE=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE=
@@ -51,6 +54,8 @@ SUPABASE_SERVICE_ROLE=
 Notes:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` is kept for compatibility, but this app uses secure server routes for DB writes.
 - `SUPABASE_SERVICE_ROLE` must never be exposed client-side.
+- `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID` must look like `ca-pub-xxxxxxxxxxxxxxxx`.
+- Ad slots are optional; if slot IDs are empty, ad blocks won't render.
 
 ## Local development
 
@@ -102,6 +107,17 @@ Tips:
 - Public payment link is in code: `https://paypal.me/AnasZaami`
 - After payment, you manually send the private code.
 - User redeems code in dashboard.
+
+## Google AdSense setup
+
+1. Create/approve your AdSense account.
+2. Get your publisher ID (`ca-pub-...`) and ad slot IDs.
+3. Set:
+   - `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID`
+   - `NEXT_PUBLIC_ADSENSE_SLOT_HOME_TOP`
+   - `NEXT_PUBLIC_ADSENSE_SLOT_HOME_MIDDLE`
+4. Redeploy on Vercel.
+5. Verify ads appear on the landing page.
 
 ## Security model
 

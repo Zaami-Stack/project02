@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Syne } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 
 import { AppProviders } from "@/components/providers/app-providers";
 import { SiteHeader } from "@/components/site-header";
@@ -87,10 +88,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const adsensePublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${manrope.variable} ${syne.variable} font-sans`}>
         <AppProviders>
+          {adsensePublisherId ? (
+            <Script
+              id="google-adsense"
+              async
+              strategy="afterInteractive"
+              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}`}
+              crossOrigin="anonymous"
+            />
+          ) : null}
           <div className="relative min-h-screen">
             <SiteHeader />
             <main>{children}</main>
