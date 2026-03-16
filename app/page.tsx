@@ -10,7 +10,7 @@ import { AdsenseUnit } from "@/components/ads/adsense-unit";
 import { APP_NAME, APP_TAGLINE, FAQ_ITEMS } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "AI Prompt Generator for Production-Ready Output",
+  title: "AI Prompt Studio",
   description: APP_TAGLINE,
   alternates: {
     canonical: "/"
