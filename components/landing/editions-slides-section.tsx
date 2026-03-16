@@ -68,7 +68,9 @@ export function EditionsSlidesSection() {
     target: desktopRef,
     offset: ["start start", "end end"]
   });
-  const x = useTransform(scrollYProgress, [0, 1], ["0dvw", `-${(slides.length - 1) * 100}dvw`]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", `-${(slides.length - 1) * 100}%`], {
+    clamp: true
+  });
   const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
@@ -96,8 +98,8 @@ export function EditionsSlidesSection() {
         </div>
       </div>
 
-      <div ref={desktopRef} className="relative mt-14 hidden lg:block" style={{ height: `${slides.length * 95}vh` }}>
-        <div className="sticky top-16 h-[calc(100vh-4rem)] overflow-hidden">
+      <div ref={desktopRef} className="relative mt-10 hidden lg:block" style={{ height: `${slides.length * 78}vh` }}>
+        <div className="sticky top-20 h-[calc(100vh-5rem)] overflow-hidden">
           <div className="pointer-events-none absolute inset-0 edition-backdrop" />
           {prefersReducedMotion ? (
             <div className="grid h-full grid-cols-2 gap-5 p-6 xl:p-10">
@@ -129,10 +131,10 @@ export function EditionsSlidesSection() {
             </div>
           ) : (
             <>
-              <motion.div style={{ x }} className="flex h-full will-change-transform">
+              <motion.div style={{ x, width: `${slides.length * 100}%` }} className="flex h-full will-change-transform">
                 {slides.map(({ icon: Icon, title, subtitle, description, chips }) => (
-                  <article key={title} className="shrink-0 px-7 py-8 xl:px-12" style={{ width: "100dvw" }}>
-                    <div className="slide-card mx-auto flex h-full w-full max-w-6xl flex-col justify-between rounded-[2rem] border border-white/25 bg-slate-950/85 p-10 text-white shadow-[0_45px_90px_-35px_rgba(15,23,42,0.9)] backdrop-blur-xl">
+                  <article key={title} className="h-full shrink-0 px-6 py-6 xl:px-8" style={{ width: `${100 / slides.length}%` }}>
+                    <div className="slide-card mx-auto flex h-full w-full max-w-6xl flex-col justify-between overflow-y-auto rounded-[2rem] border border-white/25 bg-slate-950/85 p-7 text-white shadow-[0_45px_90px_-35px_rgba(15,23,42,0.9)] backdrop-blur-xl xl:p-9">
                       <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" />
                       <div className="absolute -bottom-20 left-0 h-64 w-64 rounded-full bg-sky-300/25 blur-3xl" />
                       <div className="space-y-6">
@@ -140,8 +142,8 @@ export function EditionsSlidesSection() {
                           <Icon className="h-7 w-7" />
                         </div>
                         <p className="text-sm uppercase tracking-[0.16em] text-emerald-100/80">Winklow Editions</p>
-                        <h3 className="font-display text-5xl font-semibold leading-tight xl:text-6xl">{title}</h3>
-                        <p className="max-w-3xl text-xl text-slate-200">{subtitle}</p>
+                        <h3 className="font-display text-4xl font-semibold leading-tight xl:text-5xl">{title}</h3>
+                        <p className="max-w-3xl text-lg text-slate-200">{subtitle}</p>
                       </div>
                       <div className="grid gap-8 xl:grid-cols-[1.3fr_0.7fr]">
                         <p className="text-base leading-8 text-slate-200">{description}</p>
