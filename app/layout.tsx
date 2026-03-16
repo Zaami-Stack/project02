@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 import { AppProviders } from "@/components/providers/app-providers";
 import { SiteHeader } from "@/components/site-header";
+import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -16,9 +17,69 @@ const syne = Syne({
   variable: "--font-syne"
 });
 
+function getMetadataBase() {
+  const fallback = "https://winklow.vercel.app";
+  const value = process.env.NEXT_PUBLIC_APP_URL ?? fallback;
+
+  try {
+    return new URL(value);
+  } catch {
+    return new URL(fallback);
+  }
+}
+
 export const metadata: Metadata = {
-  title: "Winklow",
-  description: "Generate production-grade premium prompts with a clean, modern SaaS workspace."
+  metadataBase: getMetadataBase(),
+  title: {
+    default: `${APP_NAME} | AI Prompt Engineering Platform`,
+    template: `%s | ${APP_NAME}`
+  },
+  description: APP_TAGLINE,
+  applicationName: APP_NAME,
+  keywords: [
+    "AI prompt generator",
+    "prompt engineering tool",
+    "premium prompts",
+    "AI SaaS",
+    "prompt optimization",
+    "Winklow"
+  ],
+  alternates: {
+    canonical: "/"
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: APP_NAME,
+    title: `${APP_NAME} | AI Prompt Engineering Platform`,
+    description: APP_TAGLINE,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: `${APP_NAME} platform preview`
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${APP_NAME} | AI Prompt Engineering Platform`,
+    description: APP_TAGLINE,
+    images: ["/twitter-image"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+      "max-snippet": -1
+    }
+  }
 };
 
 export default function RootLayout({

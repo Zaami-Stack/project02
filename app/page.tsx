@@ -1,13 +1,80 @@
+import type { Metadata } from "next";
+
 import { FaqSection } from "@/components/landing/faq-section";
 import { FeaturesSection } from "@/components/landing/features-section";
 import { HeroSection } from "@/components/landing/hero-section";
 import { PricingSection } from "@/components/landing/pricing-section";
 import { TransformSection } from "@/components/landing/transform-section";
 import { SiteFooter } from "@/components/site-footer";
+import { APP_NAME, APP_TAGLINE, FAQ_ITEMS } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  title: "AI Prompt Generator for Production-Ready Output",
+  description: APP_TAGLINE,
+  alternates: {
+    canonical: "/"
+  }
+};
 
 export default function HomePage() {
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://winklow.vercel.app";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        name: APP_NAME,
+        url: siteUrl,
+        sameAs: ["https://paypal.me/AnasZaami"]
+      },
+      {
+        "@type": "WebSite",
+        name: APP_NAME,
+        url: siteUrl
+      },
+      {
+        "@type": "SoftwareApplication",
+        name: APP_NAME,
+        applicationCategory: "BusinessApplication",
+        operatingSystem: "Web",
+        offers: [
+          {
+            "@type": "Offer",
+            price: "0",
+            priceCurrency: "USD",
+            category: "Free"
+          },
+          {
+            "@type": "Offer",
+            price: "10",
+            priceCurrency: "USD",
+            category: "Pro"
+          }
+        ],
+        description: APP_TAGLINE
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer
+          }
+        }))
+      }
+    ]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd)
+        }}
+      />
       <HeroSection />
       <TransformSection />
       <FeaturesSection />
