@@ -2,7 +2,7 @@ import { revalidatePath } from "next/cache";
 
 import { FREE_DAILY_LIMIT } from "@/lib/constants";
 import { UsageLimitError } from "@/lib/errors";
-import { buildPremiumPrompt } from "@/lib/prompt-template";
+import { buildIntelligentPrompt } from "@/lib/prompt-intelligence";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { PlanTier, PromptGenerationResponse, PromptRecord, UsageSummary } from "@/lib/types";
 
@@ -121,7 +121,7 @@ export async function generatePremiumPrompt({
   }
 
   try {
-    const generatedPrompt = buildPremiumPrompt({
+    const generatedPrompt = buildIntelligentPrompt({
       inputPrompt,
       plan: usageGate.plan
     });

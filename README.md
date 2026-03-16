@@ -13,7 +13,7 @@ This version uses:
 - Next.js 14 + TypeScript
 - Tailwind CSS + shadcn-style UI
 - Supabase Postgres (service-role backend usage)
-- Built-in server template generator (no external AI key)
+- Built-in local prompt intelligence engine (no external AI API required)
 - Vercel deployment
 
 ## Main flow
