@@ -58,7 +58,7 @@ export function HeroSection() {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="min-w-44">
-                <Link href="#editions">Explore capabilities</Link>
+                <Link href="#transformation">See transformation</Link>
               </Button>
             </motion.div>
 

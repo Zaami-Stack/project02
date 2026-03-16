@@ -12,9 +12,6 @@ export function SiteFooter() {
           <p className="text-sm text-muted-foreground">Built for teams shipping serious AI outputs.</p>
         </div>
         <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground">
-          <Link href="/#editions" className="transition-colors hover:text-foreground">
-            Editions
-          </Link>
           <Link href="/#features" className="transition-colors hover:text-foreground">
             Features
           </Link>

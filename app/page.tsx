@@ -1,4 +1,3 @@
-import { EditionsSlidesSection } from "@/components/landing/editions-slides-section";
 import { FaqSection } from "@/components/landing/faq-section";
 import { FeaturesSection } from "@/components/landing/features-section";
 import { HeroSection } from "@/components/landing/hero-section";
@@ -10,7 +9,6 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <EditionsSlidesSection />
       <TransformSection />
       <FeaturesSection />
       <PricingSection />
