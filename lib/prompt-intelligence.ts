@@ -42,6 +42,11 @@ type PromptFrame = {
 const DOMAIN_KEYWORDS: Record<DomainId, string[]> = {
   software: [
     "app",
+    "todo",
+    "task",
+    "tasks",
+    "crud",
+    "fullstack",
     "website",
     "web",
     "saas",
@@ -495,6 +500,13 @@ function detectDomain(normalized: string, tokens: string[]): DomainId {
     }
   }
 
+  const softwareFastSignals = ["app", "api", "website", "web", "dashboard", "todo", "task", "tasks", "saas"];
+  const hasSoftwareFastSignal = hasAnyToken(tokens, softwareFastSignals);
+
+  if (bestDomain === "software" && bestScore >= 1 && hasSoftwareFastSignal) {
+    return "software";
+  }
+
   return bestScore >= 2 ? bestDomain : "general";
 }
 
@@ -632,12 +644,20 @@ function inferDynamicModules({
   if (domainId === "software") {
     modules.push(
       {
-        title: "Product flows and core use cases",
+        title: "Code implementation pack",
         focus: [
-          `Define user journeys, feature boundaries, and acceptance criteria for ${subject}.`,
-          audience ? `Tailor workflows for ${audience}.` : "Prioritize practical user-facing workflows."
+          `Implement a complete, runnable solution for ${subject} with production-safe defaults.`,
+          "Return concrete files and code, not architecture-only guidance."
         ],
-        outputs: ["User journey map", "Feature matrix", "Acceptance criteria set"]
+        outputs: ["Project file tree", "Full source code (no placeholders)", "Environment template and run commands"]
+      },
+      {
+        title: "Product flows and UX behavior",
+        focus: [
+          audience ? `Tailor workflows and microcopy for ${audience}.` : "Design clear user flows for core actions.",
+          "Cover loading, error, and empty states in the implementation."
+        ],
+        outputs: ["User flow spec", "UI state map", "Accessibility and responsiveness checklist"]
       },
       {
         title: "System architecture and API contracts",
@@ -645,23 +665,23 @@ function inferDynamicModules({
           "Design service boundaries, request/response contracts, and validation strategy.",
           techStack.length > 0 ? `Respect stack choices: ${techStack.join(", ")}.` : "Choose production-safe defaults."
         ],
-        outputs: ["Architecture diagram description", "API endpoint spec", "Error-handling rules"]
+        outputs: ["API endpoint spec", "Validation and error model", "Service responsibility map"]
       },
       {
         title: "Data model and persistence logic",
         focus: [
           "Define entities, relationships, and indexing strategy.",
-          "Include migration and data integrity safeguards."
+          "Include migrations, seed data, and data integrity safeguards."
         ],
-        outputs: ["Database schema", "Migration notes", "Data access policy"]
+        outputs: ["Database schema", "Migration script outline", "Seed dataset and constraints"]
       },
       {
-        title: "Delivery, QA, and deployment controls",
+        title: "QA, testing, and deployment controls",
         focus: [
-          "Create implementation phases with testing gates and release criteria.",
-          "Define monitoring, rollback, and incident response basics."
+          "Create test coverage across core flows, edge cases, and regression checks.",
+          "Define deployment, rollback, and monitoring steps."
         ],
-        outputs: ["Implementation backlog", "Test plan", "Launch checklist"]
+        outputs: ["Test cases", "CI/check pipeline checklist", "Deployment and rollback runbook"]
       }
     );
 
@@ -873,6 +893,8 @@ export function buildIntelligentPrompt({
   const timeline = extractTimeline(lowered);
   const budget = extractBudget(lowered);
   const complexity = estimateComplexity(normalized, topicTerms, techStack, quotedPhrases);
+  const isSoftwareBuild = domainId === "software" && intentId === "build";
+  const isSmallProductBuild = isSoftwareBuild && hasAnyToken(tokens, ["app", "todo", "task", "tasks", "dashboard", "website"]);
   const seed = hashString(`${normalized}|${domainId}|${intentId}|${plan}`);
   const directiveTitle = buildDirectiveTitle(normalized);
 
@@ -938,6 +960,9 @@ export function buildIntelligentPrompt({
   if (techStack.length) {
     constraints.push(`Respect stack preference: ${techStack.join(", ")}.`);
   }
+  if (isSoftwareBuild) {
+    constraints.push("For build requests, produce executable code artifacts, not strategy-only output.");
+  }
 
   const inferredModules = inferDynamicModules({
     domainId,
@@ -976,6 +1001,15 @@ export function buildIntelligentPrompt({
   ].slice(0, phaseCount);
 
   const selectedDeliverables = unique([
+    ...(isSoftwareBuild
+      ? [
+          "Project file tree",
+          "Complete runnable source code for all files",
+          "Installation and run commands",
+          "Environment variables template",
+          "Testing instructions and sample test cases"
+        ]
+      : []),
     ...profile.deliverables,
     ...selectedModules.flatMap((module) => module.outputs)
   ]).slice(0, plan === "pro" ? 10 : 7);
@@ -986,6 +1020,7 @@ export function buildIntelligentPrompt({
       ...selectedModules.map(
         (module) => `Module "${module.title}" produces concrete artifacts instead of generic advice.`
       ),
+      isSoftwareBuild ? "Code output is complete, runnable, and contains no TODO placeholders." : "",
       topicTerms.length > 0 ? `Output stays specific to: ${topicTerms.slice(0, 4).join(", ")}.` : ""
     ].filter(Boolean)
   ).slice(0, plan === "pro" ? 12 : 8);
@@ -1007,6 +1042,32 @@ export function buildIntelligentPrompt({
   if (selectedModules.length) {
     contextLines.push(`Dynamic modules: ${selectedModules.map((module) => module.title).join(" | ")}`);
   }
+
+  const codeFirstRules = isSoftwareBuild
+    ? [
+        "Deliver implementation first: output real code and runnable artifacts before any optional explanation.",
+        "Never stop at roadmap-only or blueprint-only responses when the user asks to build/create/develop.",
+        "Use full file contents with language-tagged code fences and explicit file paths.",
+        "Do not omit critical files (entrypoint, config, data schema, core components, and setup instructions).",
+        isSmallProductBuild
+          ? "For small products (for example todo/task apps), return a compact but fully working MVP in one response."
+          : "For larger products, provide complete foundational files plus a clear continuation plan for optional advanced modules."
+      ]
+    : [];
+
+  const outputFormatContractLines = [
+    "Use markdown headings and numbered sections.",
+    "Include: Objective, Scope, Requirements, Module Outputs, Execution Plan, Risks, Deliverables, Checklist.",
+    "Under each deliverable, produce complete final content (not instructions to produce content).",
+    "Do not include any prompt block, meta-prompt, or \"prompt rewrite\" section.",
+    "Do not ask clarifying questions unless a blocker prevents meaningful output.",
+    ...(isSoftwareBuild
+      ? [
+          "Include a file tree and full code for each file required to run the solution.",
+          "End with exact run commands and verification steps."
+        ]
+      : [])
+  ];
 
   return `
 SYSTEM ROLE
@@ -1036,6 +1097,8 @@ ${listItems([
   "Do not ask the user to copy/paste into another model; complete the work now.",
   "If information is missing, state assumptions briefly and continue with the best professional result."
 ])}
+
+${isSoftwareBuild ? `CODE-FIRST DELIVERY MODE\n${listItems(codeFirstRules)}\n` : ""}
 
 MANDATORY CONSTRAINTS
 ${listItems(constraints)}
@@ -1071,11 +1134,7 @@ QUALITY VERIFICATION CHECKLIST
 ${listItems(selectedQualityChecks)}
 
 OUTPUT FORMAT CONTRACT
-- Use markdown headings and numbered sections.
-- Include: Objective, Scope, Requirements, Module Outputs, Execution Plan, Risks, Deliverables, Checklist.
-- Under each deliverable, produce complete final content (not instructions to produce content).
-- Do not include any prompt block, meta-prompt, or "prompt rewrite" section.
-- Do not ask clarifying questions unless a blocker prevents meaningful output.
+${listItems(outputFormatContractLines)}
 
 Now execute the request and return the final deliverables.
 `.trim();
