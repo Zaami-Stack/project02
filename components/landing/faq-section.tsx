@@ -11,7 +11,7 @@ export function FaqSection() {
         <SectionReveal>
           <div className="max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card/75 p-7 backdrop-blur sm:p-9">
             <Badge variant="secondary">FAQ</Badge>
-            <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
               Straight answers before you launch.
             </h2>
           </div>

@@ -15,14 +15,14 @@ export function TransformSection() {
             <Badge className="w-fit">How prompt upgrading works</Badge>
             <div className="grid gap-7 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
               <div className="space-y-3">
-                <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+                <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
                   From rough sentence to execution-ready instruction set.
                 </h2>
-                <p className="text-lg leading-8 text-muted-foreground">
+                <p className="text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
                   Winklow converts vague ideas into guided briefs that AI can execute with consistency and technical depth.
                 </p>
               </div>
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 md:grid-cols-3">
                 {["Input", "Expansion", "Delivery"].map((step, idx) => (
                   <div key={step} className="rounded-xl border border-border/80 bg-background/80 px-4 py-3">
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Step {idx + 1}</p>
@@ -64,7 +64,7 @@ export function TransformSection() {
                 <div className="rounded-2xl border border-primary/25 bg-background/90 p-5">
                   <p className="text-sm leading-7">{MARKETING_EXAMPLE.output}</p>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-3">
+                <div className="grid gap-3 md:grid-cols-3">
                   {[
                     { icon: Braces, label: "Roles and constraints" },
                     { icon: DatabaseZap, label: "Architecture and data model" },

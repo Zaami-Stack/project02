@@ -45,10 +45,10 @@ export function FeaturesSection() {
         <SectionReveal>
           <div className="max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card/75 p-7 backdrop-blur sm:p-9">
             <Badge variant="secondary">Why teams choose Winklow</Badge>
-            <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
               Designed for reliable output, not prompt theater.
             </h2>
-            <p className="text-lg leading-8 text-muted-foreground">
+            <p className="text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
               Every layer is built for consistency: secure quotas, deterministic upgrades, and a workspace that stays fast as your usage grows.
             </p>
           </div>

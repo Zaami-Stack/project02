@@ -78,7 +78,7 @@ export function PromptHistoryList({
                   <div
                     key={prompt.id}
                     className={cn(
-                      "rounded-xl border border-border/80 bg-background p-5 transition",
+                      "rounded-xl border border-border/80 bg-background p-4 transition sm:p-5",
                       activePromptId === prompt.id && "border-primary/35 bg-primary/[0.04]"
                     )}
                   >
@@ -89,12 +89,13 @@ export function PromptHistoryList({
                         onClick={() => onSelect(prompt)}
                       >
                         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{formatDate(prompt.created_at)}</p>
-                        <h3 className="mt-2 text-lg font-semibold">{prompt.input_prompt}</h3>
-                        <p className="mt-2 line-clamp-3 text-sm leading-7 text-muted-foreground">{prompt.generated_prompt}</p>
+                        <h3 className="mt-2 text-base font-semibold sm:text-lg">{prompt.input_prompt}</h3>
+                        <p className="mt-2 line-clamp-3 break-words text-sm leading-7 text-muted-foreground">{prompt.generated_prompt}</p>
                       </button>
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="self-end sm:self-auto"
                         disabled={isPending}
                         onClick={() =>
                           startTransition(async () => {

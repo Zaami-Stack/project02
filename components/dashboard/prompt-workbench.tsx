@@ -92,7 +92,7 @@ export function PromptWorkbench({
             <Textarea
               id="prompt-input"
               placeholder="Example: build a CRM for freelance designers"
-              className="min-h-[220px]"
+              className="min-h-[180px] sm:min-h-[220px]"
               value={input}
               onChange={(event) => setInput(event.target.value)}
             />
@@ -102,17 +102,23 @@ export function PromptWorkbench({
             </Button>
           </div>
           <div className="rounded-2xl border border-border/80 bg-background p-5">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold">Premium output</p>
                 <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground">Structured output format</p>
               </div>
-              <Button variant="outline" size="sm" onClick={handleCopy} disabled={!activePrompt || isPending}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                disabled={!activePrompt || isPending}
+                className="w-full sm:w-auto"
+              >
                 <Copy className="h-4 w-4" />
                 {copied ? "Copied" : "Copy"}
               </Button>
             </div>
-            <div className="mt-4 min-h-[280px] max-h-[560px] overflow-auto rounded-xl border border-dashed border-border/70 bg-card/60 p-5">
+            <div className="mt-4 min-h-[260px] max-h-[420px] overflow-auto rounded-xl border border-dashed border-border/70 bg-card/60 p-4 sm:min-h-[280px] sm:max-h-[560px] sm:p-5">
               {isGenerating ? (
                 <div className="flex h-full min-h-[240px] flex-col items-center justify-center gap-4 text-center">
                   <div className="h-12 w-12 rounded-full bg-secondary p-3 text-foreground">
@@ -126,7 +132,9 @@ export function PromptWorkbench({
                   </div>
                 </div>
               ) : activePrompt ? (
-                <pre className="whitespace-pre-wrap break-words text-sm leading-7 text-foreground">{activePrompt.generated_prompt}</pre>
+                <pre className="whitespace-pre-wrap break-words text-xs leading-6 text-foreground sm:text-sm sm:leading-7">
+                  {activePrompt.generated_prompt}
+                </pre>
               ) : (
                 <div className="flex h-full min-h-[240px] items-center justify-center text-center text-sm leading-6 text-muted-foreground">
                   Your optimized prompt will appear here after generation.

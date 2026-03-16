@@ -11,7 +11,7 @@ export function UsageMeter({ usage }: { usage: UsageSummary }) {
   return (
     <Card>
       <CardHeader className="space-y-3 border-b border-border/70 pb-5">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <Badge variant={usage.plan === "pro" ? "accent" : "default"}>
             {usage.plan === "pro" ? "Pro plan" : "Free plan"}
           </Badge>

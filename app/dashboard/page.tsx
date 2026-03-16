@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   return (
-    <div className="container py-10">
+    <div className="container py-6 sm:py-10">
       <DashboardShell />
     </div>
   );

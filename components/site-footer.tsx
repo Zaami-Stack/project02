@@ -11,7 +11,7 @@ export function SiteFooter() {
           <Logo className="w-fit" />
           <p className="text-sm text-muted-foreground">Built for teams shipping serious AI outputs.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground">
+        <div className="grid w-full grid-cols-2 gap-x-4 gap-y-3 text-sm font-medium text-muted-foreground sm:w-auto sm:grid-cols-none sm:flex sm:flex-wrap sm:items-center sm:gap-6">
           <Link href="/#features" className="transition-colors hover:text-foreground">
             Features
           </Link>

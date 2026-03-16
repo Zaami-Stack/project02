@@ -45,10 +45,10 @@ export function PricingSection() {
         <SectionReveal>
           <div className="mx-auto max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card/75 p-7 text-center backdrop-blur sm:p-9">
             <Badge className="mx-auto">Simple pricing</Badge>
-            <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
               One product. Two clear modes.
             </h2>
-            <p className="text-lg leading-8 text-muted-foreground">
+            <p className="text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
               Free starts instantly. Pro activates in seconds with your private access code after payment.
             </p>
           </div>
@@ -69,7 +69,7 @@ export function PricingSection() {
                     {plan.featured ? <Badge variant="accent">Preferred</Badge> : null}
                   </div>
                   <div className="flex items-end gap-2">
-                    <span className="font-display text-5xl font-semibold">{plan.price}</span>
+                    <span className="font-display text-4xl font-semibold sm:text-5xl">{plan.price}</span>
                     <span className="pb-1 text-sm text-muted-foreground">{plan.name === "Pro" ? "/ month" : ""}</span>
                   </div>
                   <p className="text-muted-foreground">{plan.description}</p>

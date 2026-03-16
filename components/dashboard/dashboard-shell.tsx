@@ -176,15 +176,15 @@ export function DashboardShell() {
           <div className="space-y-5">
             <Badge variant="outline">Winklow Workspace</Badge>
             <div className="space-y-4">
-              <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+              <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
                 Premium prompt operations, in one dashboard.
               </h1>
-              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
+              <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
                 Start in free mode, save prompt history on this device, and unlock Pro instantly with your private code.
               </p>
             </div>
           </div>
-          <div className="rounded-2xl border border-border/80 bg-background p-5">
+          <div className="w-full rounded-2xl border border-border/80 bg-background p-5 lg:max-w-md">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Device status</p>
             <p className="mt-2 text-lg font-semibold">
               {isBootstrapping ? "Initializing secure session..." : access.plan === "pro" ? "Pro unlocked" : "Free mode"}
@@ -192,11 +192,11 @@ export function DashboardShell() {
             <p className="mt-2 text-sm text-muted-foreground">
               {fingerprint ? "Device fingerprint verified." : "Preparing secure fingerprint."}
             </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Button variant="outline" asChild>
+            <div className="mt-4 grid gap-3 sm:flex sm:flex-wrap">
+              <Button variant="outline" asChild className="w-full sm:w-auto">
                 <a href="#history">View history</a>
               </Button>
-              <Button variant="ghost" asChild>
+              <Button variant="ghost" asChild className="w-full sm:w-auto">
                 <a href="#billing">Manage Pro access</a>
               </Button>
             </div>
