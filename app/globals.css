@@ -1,5 +1,3 @@
-@import "../styles/animations.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -61,15 +59,15 @@ body {
   @apply bg-background text-foreground antialiased;
   overflow-x: clip;
   background-image:
-    radial-gradient(circle at top, rgba(15, 23, 42, 0.06), transparent 42%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.02), transparent 40%);
+    radial-gradient(circle at top, rgba(15, 23, 42, 0.04), transparent 46%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.012), transparent 32%);
   min-height: 100vh;
 }
 
 .dark body {
   background-image:
-    radial-gradient(circle at top, rgba(148, 163, 184, 0.14), transparent 35%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.55), rgba(2, 6, 23, 1));
+    radial-gradient(circle at top, rgba(148, 163, 184, 0.08), transparent 36%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.48), rgba(2, 6, 23, 1));
 }
 
 .glass-panel {
@@ -77,56 +75,7 @@ body {
 }
 
 .section-shell {
-  @apply rounded-2xl border border-border/85 bg-card/95 p-6 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.45)] backdrop-blur;
-}
-
-.hero-grid {
-  background-image: linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
-  background-size: 56px 56px;
-}
-
-.dark .hero-grid {
-  background-image: linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
-}
-
-.edition-backdrop {
-  background:
-    radial-gradient(120% 95% at 0% 0%, rgba(16, 185, 129, 0.2), transparent 55%),
-    radial-gradient(95% 110% at 100% 0%, rgba(14, 165, 233, 0.16), transparent 50%),
-    radial-gradient(140% 120% at 50% 90%, rgba(15, 23, 42, 0.08), transparent 58%);
-}
-
-.dark .edition-backdrop {
-  background:
-    radial-gradient(110% 90% at 0% 0%, rgba(16, 185, 129, 0.25), transparent 52%),
-    radial-gradient(95% 105% at 100% 0%, rgba(56, 189, 248, 0.2), transparent 48%),
-    radial-gradient(140% 120% at 50% 95%, rgba(2, 6, 23, 0.85), transparent 60%);
-}
-
-.edition-spotlight {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0) 62%);
-  filter: blur(8px);
-}
-
-.dark .edition-spotlight {
-  background: radial-gradient(circle, rgba(148, 163, 184, 0.25), rgba(15, 23, 42, 0) 68%);
-}
-
-.section-divider {
-  background: linear-gradient(90deg, transparent, hsl(var(--border) / 0.85), transparent);
-  height: 1px;
-  width: 100%;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+  @apply rounded-2xl border border-border/85 bg-card/95 p-5 shadow-[0_20px_48px_-38px_rgba(15,23,42,0.48)] sm:p-6;
 }
 
 ::selection {

@@ -1,13 +1,20 @@
 import Link from "next/link";
+import { Menu } from "lucide-react";
 
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { PAYPAL_ME_URL } from "@/lib/constants";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/95 backdrop-blur-xl">
       <div className="container flex h-16 items-center justify-between gap-2 sm:gap-4">
         <Logo />
         <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
@@ -22,6 +29,32 @@ export function SiteHeader() {
           </Link>
         </nav>
         <div className="flex items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="md:hidden" aria-label="Open menu">
+                <Menu className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem asChild>
+                <Link href="/#features">Features</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/#pricing">Pricing</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/#faq">FAQ</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href={PAYPAL_ME_URL} target="_blank" rel="noreferrer">
+                  Buy Pro Code
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/contact">Contact</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <ThemeToggle />
           <Button variant="ghost" asChild className="hidden md:inline-flex">
             <a href={PAYPAL_ME_URL} target="_blank" rel="noreferrer">
@@ -36,25 +69,6 @@ export function SiteHeader() {
             </Link>
           </Button>
         </div>
-      </div>
-      <div className="border-t border-border/70 md:hidden">
-        <nav className="container no-scrollbar flex items-center gap-5 overflow-x-auto py-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-          <Link href="/#features" className="shrink-0 transition-colors hover:text-foreground">
-            Features
-          </Link>
-          <Link href="/#pricing" className="shrink-0 transition-colors hover:text-foreground">
-            Pricing
-          </Link>
-          <Link href="/#faq" className="shrink-0 transition-colors hover:text-foreground">
-            FAQ
-          </Link>
-          <a href={PAYPAL_ME_URL} target="_blank" rel="noreferrer" className="shrink-0 transition-colors hover:text-foreground">
-            Buy Pro
-          </a>
-          <Link href="/contact" className="shrink-0 transition-colors hover:text-foreground">
-            Contact
-          </Link>
-        </nav>
       </div>
     </header>
   );

@@ -39,11 +39,10 @@ const plans: Array<{
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="relative overflow-hidden py-20">
-      <div className="pointer-events-none absolute inset-0 edition-backdrop opacity-75" />
-      <div className="container relative space-y-10">
+    <section id="pricing" className="py-16 sm:py-20">
+      <div className="container space-y-10">
         <SectionReveal>
-          <div className="mx-auto max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card/75 p-7 text-center backdrop-blur sm:p-9">
+          <div className="mx-auto max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card p-7 text-center sm:p-9">
             <Badge className="mx-auto">Simple pricing</Badge>
             <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
               One product. Two clear modes.
@@ -59,8 +58,8 @@ export function PricingSection() {
               <Card
                 className={
                   plan.featured
-                    ? "border-primary/30 bg-primary/[0.08] shadow-[0_35px_60px_-36px_rgba(16,185,129,0.6)]"
-                    : "border-border/80 bg-card/80"
+                    ? "border-primary/30 bg-primary/[0.05] shadow-[0_24px_48px_-34px_rgba(16,185,129,0.5)]"
+                    : "border-border/80"
                 }
               >
                 <CardHeader className="space-y-4">

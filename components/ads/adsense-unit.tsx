@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const PUBLISHER_ID = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+const PUBLISHER_ID = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? "ca-pub-7336372781083421";
 
 export function AdsenseUnit({ slot, className, format = "auto" }: AdsenseUnitProps) {
   const initializedRef = useRef(false);

@@ -21,6 +21,8 @@ export default function HomePage() {
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://winklow.vercel.app";
   const topAdSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME_TOP;
   const middleAdSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME_MIDDLE;
+  const shouldRenderTopAd = Boolean(topAdSlot);
+  const shouldRenderMiddleAd = Boolean(middleAdSlot);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -80,20 +82,24 @@ export default function HomePage() {
       />
       <HeroSection />
       <TransformSection />
-      <section className="py-8">
-        <div className="container">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Sponsored</p>
-          <AdsenseUnit slot={topAdSlot} />
-        </div>
-      </section>
+      {shouldRenderTopAd ? (
+        <section className="py-8">
+          <div className="container">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Sponsored</p>
+            <AdsenseUnit slot={topAdSlot} />
+          </div>
+        </section>
+      ) : null}
       <FeaturesSection />
       <PricingSection />
-      <section className="py-8">
-        <div className="container">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Sponsored</p>
-          <AdsenseUnit slot={middleAdSlot} />
-        </div>
-      </section>
+      {shouldRenderMiddleAd ? (
+        <section className="py-8">
+          <div className="container">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Sponsored</p>
+            <AdsenseUnit slot={middleAdSlot} />
+          </div>
+        </section>
+      ) : null}
       <FaqSection />
       <SiteFooter />
     </>

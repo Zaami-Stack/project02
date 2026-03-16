@@ -7,11 +7,10 @@ import { MARKETING_EXAMPLE } from "@/lib/constants";
 
 export function TransformSection() {
   return (
-    <section id="transformation" className="relative overflow-hidden py-20">
-      <div className="pointer-events-none absolute inset-0 edition-backdrop opacity-80" />
-      <div className="container relative">
+    <section id="transformation" className="py-16 sm:py-20">
+      <div className="container">
         <SectionReveal>
-          <div className="mb-10 space-y-6 rounded-3xl border border-border/80 bg-card/70 p-7 backdrop-blur sm:p-10">
+          <div className="mb-10 space-y-6 rounded-3xl border border-border/80 bg-card p-7 sm:p-10">
             <Badge className="w-fit">How prompt upgrading works</Badge>
             <div className="grid gap-7 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
               <div className="space-y-3">
@@ -35,7 +34,7 @@ export function TransformSection() {
         </SectionReveal>
         <div className="grid gap-6 lg:grid-cols-[1fr_auto_1fr]">
           <SectionReveal delay={0.05}>
-            <Card className="h-full border-border/80 bg-card/85 shadow-lg backdrop-blur">
+            <Card className="h-full border-border/80">
               <CardHeader>
                 <CardTitle>Starter prompt</CardTitle>
               </CardHeader>
@@ -51,12 +50,12 @@ export function TransformSection() {
             </Card>
           </SectionReveal>
           <div className="hidden items-center justify-center lg:flex">
-            <div className="rounded-2xl border border-border/80 bg-card p-4 text-foreground shadow-sm backdrop-blur">
+            <div className="rounded-2xl border border-border/80 bg-background p-4 text-foreground shadow-sm">
               <ArrowRight className="h-8 w-8" />
             </div>
           </div>
           <SectionReveal delay={0.1}>
-            <Card className="h-full border-primary/30 bg-primary/[0.08] shadow-[0_30px_60px_-34px_rgba(16,185,129,0.65)]">
+            <Card className="h-full border-primary/25 bg-primary/[0.04]">
               <CardHeader>
                 <CardTitle>Premium prompt</CardTitle>
               </CardHeader>
