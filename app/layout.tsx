@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope, Syne } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import Script from "next/script";
 
 import { AppProviders } from "@/components/providers/app-providers";
 import { SiteHeader } from "@/components/site-header";
@@ -96,15 +95,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className={`${manrope.variable} ${syne.variable} font-sans`}>
         <AppProviders>
-          <Script
-            id="google-adsense"
-            async
-            strategy="afterInteractive"
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
-            crossOrigin="anonymous"
-          />
           <div className="relative min-h-screen">
             <SiteHeader />
             <main>{children}</main>
