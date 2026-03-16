@@ -17,7 +17,7 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "PromptForge AI",
+  title: "Winklow",
   description: "Generate production-grade premium prompts with a clean, modern SaaS workspace."
 };
 

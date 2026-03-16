@@ -80,7 +80,7 @@ export function PromptWorkbench({
       <CardHeader className="space-y-3 border-b border-border/70 pb-5">
         <CardTitle>Prompt Editor</CardTitle>
         <CardDescription>
-          Describe the output you want. PromptForge will turn it into a premium prompt with role, requirements, architecture, UX, security, and delivery guidance.
+          Describe the output you want. Winklow will turn it into a premium prompt with role, requirements, architecture, UX, security, and delivery guidance.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -112,7 +112,7 @@ export function PromptWorkbench({
                 {copied ? "Copied" : "Copy"}
               </Button>
             </div>
-            <div className="mt-4 min-h-[280px] rounded-xl border border-dashed border-border/70 bg-card/60 p-5">
+            <div className="mt-4 min-h-[280px] max-h-[560px] overflow-auto rounded-xl border border-dashed border-border/70 bg-card/60 p-5">
               {isGenerating ? (
                 <div className="flex h-full min-h-[240px] flex-col items-center justify-center gap-4 text-center">
                   <div className="h-12 w-12 rounded-full bg-secondary p-3 text-foreground">

@@ -1,11 +1,12 @@
 # Supabase assets
 
-This folder contains the PromptForge SQL migration for the no-account + access-code model.
+This folder contains the Winklow SQL migration for the no-account + access-code model.
 
 ## Apply migration
 
 Run:
 - `supabase/migrations/20260315193000_promptforge_schema.sql`
+- `supabase/migrations/20260316000500_fix_hash_access_code_search_path.sql`
 
 ## Tables created
 
@@ -34,4 +35,3 @@ values (
   1
 );
 ```
-

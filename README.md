@@ -1,6 +1,6 @@
-# PromptForge AI
+# Winklow
 
-PromptForge AI is a production-ready SaaS app that upgrades simple prompts into premium, structured prompts for modern AI models.
+Winklow is a production-ready SaaS app that upgrades simple prompts into premium, structured prompts for modern AI models.
 
 This version uses:
 - No account system
@@ -64,6 +64,7 @@ npm run dev
 1. Create a Supabase project.
 2. Open SQL editor and run:
    - `supabase/migrations/20260315193000_promptforge_schema.sql`
+   - `supabase/migrations/20260316000500_fix_hash_access_code_search_path.sql`
 3. Confirm tables exist:
    - `access_codes`
    - `access_sessions`

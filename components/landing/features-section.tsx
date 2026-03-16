@@ -44,7 +44,7 @@ export function FeaturesSection() {
       <div className="container relative space-y-10">
         <SectionReveal>
           <div className="max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card/75 p-7 backdrop-blur sm:p-9">
-            <Badge variant="secondary">Why teams choose PromptForge</Badge>
+            <Badge variant="secondary">Why teams choose Winklow</Badge>
             <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
               Designed for reliable output, not prompt theater.
             </h2>

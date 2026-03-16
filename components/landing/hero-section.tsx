@@ -37,7 +37,7 @@ export function HeroSection() {
               className="space-y-6"
             >
               <Badge variant="secondary" className="w-fit px-3 py-1 text-xs uppercase tracking-[0.18em]">
-                PromptForge Winter Editions
+                Winklow Winter Editions
               </Badge>
               <h1 className="max-w-4xl font-display text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl xl:text-7xl">
                 Crazy good prompts from one rough line.

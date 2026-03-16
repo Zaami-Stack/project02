@@ -59,6 +59,7 @@ html {
 
 body {
   @apply bg-background text-foreground antialiased;
+  overflow-x: clip;
   background-image:
     radial-gradient(circle at top, rgba(15, 23, 42, 0.06), transparent 42%),
     linear-gradient(180deg, rgba(15, 23, 42, 0.02), transparent 40%);

@@ -1,5 +1,5 @@
-export const APP_NAME = "PromptForge AI";
-export const APP_TAGLINE = "Turn rough ideas into premium prompts that ship serious AI outcomes.";
+export const APP_NAME = "Winklow";
+export const APP_TAGLINE = "Winklow turns rough ideas into premium prompts that ship serious AI outcomes.";
 export const FREE_DAILY_LIMIT = 10;
 export const PRO_MONTHLY_PRICE = 10;
 export const PAYPAL_ME_URL = "https://paypal.me/AnasZaami";
@@ -12,7 +12,7 @@ export const MARKETING_EXAMPLE = {
 
 export const FAQ_ITEMS = [
   {
-    question: "What does PromptForge AI actually do?",
+    question: "What does Winklow actually do?",
     answer:
       "It expands a short idea into a premium prompt with structure, constraints, architecture, UX, and delivery guidance tailored for modern AI models."
   },
@@ -34,6 +34,6 @@ export const FAQ_ITEMS = [
   {
     question: "How does abuse protection work?",
     answer:
-      "PromptForge combines account limits with IP checks, browser fingerprinting, server-side validation, and database-enforced rate controls."
+      "Winklow combines account limits with IP checks, browser fingerprinting, server-side validation, and database-enforced rate controls."
   }
 ] as const;

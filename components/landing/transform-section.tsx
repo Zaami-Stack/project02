@@ -19,7 +19,7 @@ export function TransformSection() {
                   From rough sentence to execution-ready instruction set.
                 </h2>
                 <p className="text-lg leading-8 text-muted-foreground">
-                  PromptForge converts vague ideas into guided briefs that AI can execute with consistency and technical depth.
+                  Winklow converts vague ideas into guided briefs that AI can execute with consistency and technical depth.
                 </p>
               </div>
               <div className="grid gap-3 sm:grid-cols-3">

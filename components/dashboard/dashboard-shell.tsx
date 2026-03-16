@@ -174,7 +174,7 @@ export function DashboardShell() {
       <section className="section-shell overflow-hidden">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-5">
-            <Badge variant="outline">PromptForge Workspace</Badge>
+            <Badge variant="outline">Winklow Workspace</Badge>
             <div className="space-y-4">
               <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
                 Premium prompt operations, in one dashboard.

@@ -31,8 +31,11 @@ export function SiteHeader() {
               Buy Pro Code
             </a>
           </Button>
-          <Button variant="accent" asChild>
-            <Link href="/dashboard">Open dashboard</Link>
+          <Button variant="accent" asChild className="px-3 sm:px-5">
+            <Link href="/dashboard">
+              <span className="sm:hidden">Dashboard</span>
+              <span className="hidden sm:inline">Open dashboard</span>
+            </Link>
           </Button>
         </div>
       </div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Blocks, Gauge, Rocket, ShieldCheck } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ const slides: Slide[] = [
     title: "Directive Engine",
     subtitle: "Turn 7 words into a full production direction set.",
     description:
-      "PromptForge restructures intent into roles, objectives, constraints, edge cases, and success criteria so AI systems stop guessing and start executing.",
+      "Winklow restructures intent into roles, objectives, constraints, edge cases, and success criteria so AI systems stop guessing and start executing.",
     chips: ["Role assignment", "Output format contract", "Constraint map", "Complexity scaling"]
   },
   {
@@ -47,7 +47,7 @@ const slides: Slide[] = [
     title: "Launch Instructions",
     subtitle: "Finish with deploy-ready execution steps.",
     description:
-      "From environment variables to release checklist, PromptForge adds practical final-mile instructions so outputs are not only impressive but shippable.",
+      "From environment variables to release checklist, Winklow adds practical final-mile instructions so outputs are not only impressive but shippable.",
     chips: ["Deployment flow", "Env variables", "Monitoring notes", "Handoff summary"]
   }
 ];
@@ -62,12 +62,13 @@ const loopWords = [
 ];
 
 export function EditionsSlidesSection() {
+  const prefersReducedMotion = useReducedMotion();
   const desktopRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: desktopRef,
     offset: ["start start", "end end"]
   });
-  const x = useTransform(scrollYProgress, [0, 1], ["0vw", `-${(slides.length - 1) * 100}vw`]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0dvw", `-${(slides.length - 1) * 100}dvw`]);
   const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
@@ -95,40 +96,72 @@ export function EditionsSlidesSection() {
         </div>
       </div>
 
-      <div ref={desktopRef} className="relative mt-14 hidden lg:block" style={{ height: `${slides.length * 82}vh` }}>
+      <div ref={desktopRef} className="relative mt-14 hidden lg:block" style={{ height: `${slides.length * 95}vh` }}>
         <div className="sticky top-16 h-[calc(100vh-4rem)] overflow-hidden">
           <div className="pointer-events-none absolute inset-0 edition-backdrop" />
-          <motion.div style={{ x }} className="flex h-full">
-            {slides.map(({ icon: Icon, title, subtitle, description, chips }) => (
-              <article key={title} className="w-screen shrink-0 px-7 py-8 xl:px-12">
-                <div className="slide-card mx-auto flex h-full w-full max-w-6xl flex-col justify-between rounded-[2rem] border border-white/25 bg-slate-950/85 p-10 text-white shadow-[0_45px_90px_-35px_rgba(15,23,42,0.9)] backdrop-blur-xl">
-                  <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" />
-                  <div className="absolute -bottom-20 left-0 h-64 w-64 rounded-full bg-sky-300/25 blur-3xl" />
-                  <div className="space-y-6">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10">
-                      <Icon className="h-7 w-7" />
+          {prefersReducedMotion ? (
+            <div className="grid h-full grid-cols-2 gap-5 p-6 xl:p-10">
+              {slides.map(({ icon: Icon, title, subtitle, description, chips }) => (
+                <article
+                  key={`reduced-${title}`}
+                  className="slide-card flex h-full flex-col justify-between rounded-[1.75rem] border border-white/25 bg-slate-950/85 p-7 text-white shadow-[0_45px_90px_-40px_rgba(15,23,42,0.95)] backdrop-blur-xl"
+                >
+                  <div className="space-y-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/20 bg-white/10">
+                      <Icon className="h-6 w-6" />
                     </div>
-                    <p className="text-sm uppercase tracking-[0.16em] text-emerald-100/80">PromptForge Editions</p>
-                    <h3 className="font-display text-5xl font-semibold leading-tight xl:text-6xl">{title}</h3>
-                    <p className="max-w-3xl text-xl text-slate-200">{subtitle}</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-emerald-100/80">Winklow Editions</p>
+                    <h3 className="font-display text-3xl font-semibold leading-tight">{title}</h3>
+                    <p className="text-sm text-slate-200">{subtitle}</p>
                   </div>
-                  <div className="grid gap-8 xl:grid-cols-[1.3fr_0.7fr]">
-                    <p className="text-base leading-8 text-slate-200">{description}</p>
-                    <div className="grid gap-3">
+                  <div className="mt-6 space-y-4">
+                    <p className="text-sm leading-7 text-slate-200">{description}</p>
+                    <div className="grid gap-2 sm:grid-cols-2">
                       {chips.map((chip) => (
-                        <div key={chip} className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-medium">
+                        <div key={`${title}-${chip}`} className="rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-medium">
                           {chip}
                         </div>
                       ))}
                     </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </motion.div>
-          <div className="pointer-events-none absolute bottom-8 left-1/2 h-1 w-[min(70vw,520px)] -translate-x-1/2 overflow-hidden rounded-full bg-white/20">
-            <motion.div style={{ scaleX: progress }} className="h-full origin-left rounded-full bg-emerald-300" />
-          </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <>
+              <motion.div style={{ x }} className="flex h-full will-change-transform">
+                {slides.map(({ icon: Icon, title, subtitle, description, chips }) => (
+                  <article key={title} className="shrink-0 px-7 py-8 xl:px-12" style={{ width: "100dvw" }}>
+                    <div className="slide-card mx-auto flex h-full w-full max-w-6xl flex-col justify-between rounded-[2rem] border border-white/25 bg-slate-950/85 p-10 text-white shadow-[0_45px_90px_-35px_rgba(15,23,42,0.9)] backdrop-blur-xl">
+                      <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" />
+                      <div className="absolute -bottom-20 left-0 h-64 w-64 rounded-full bg-sky-300/25 blur-3xl" />
+                      <div className="space-y-6">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10">
+                          <Icon className="h-7 w-7" />
+                        </div>
+                        <p className="text-sm uppercase tracking-[0.16em] text-emerald-100/80">Winklow Editions</p>
+                        <h3 className="font-display text-5xl font-semibold leading-tight xl:text-6xl">{title}</h3>
+                        <p className="max-w-3xl text-xl text-slate-200">{subtitle}</p>
+                      </div>
+                      <div className="grid gap-8 xl:grid-cols-[1.3fr_0.7fr]">
+                        <p className="text-base leading-8 text-slate-200">{description}</p>
+                        <div className="grid gap-3">
+                          {chips.map((chip) => (
+                            <div key={chip} className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-medium">
+                              {chip}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </motion.div>
+              <div className="pointer-events-none absolute bottom-8 left-1/2 h-1 w-[min(70vw,520px)] -translate-x-1/2 overflow-hidden rounded-full bg-white/20">
+                <motion.div style={{ scaleX: progress }} className="h-full origin-left rounded-full bg-emerald-300" />
+              </div>
+            </>
+          )}
         </div>
       </div>
 
