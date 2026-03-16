@@ -34,7 +34,7 @@ function getMetadataBase() {
 export const metadata: Metadata = {
   metadataBase: getMetadataBase(),
   title: {
-    default: `${APP_NAME} | AI Prompt Engineering Platform`,
+    default: `${APP_NAME} | Prompt Studio`,
     template: `%s | ${APP_NAME}`
   },
   description: APP_TAGLINE,
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "/",
     siteName: APP_NAME,
-    title: `${APP_NAME} | AI Prompt Engineering Platform`,
+    title: `${APP_NAME} | Prompt Studio`,
     description: APP_TAGLINE,
     images: [
       {
@@ -68,9 +68,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${APP_NAME} | AI Prompt Engineering Platform`,
+    title: `${APP_NAME} | Prompt Studio`,
     description: APP_TAGLINE,
     images: ["/twitter-image"]
+  },
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg"
   },
   robots: {
     index: true,

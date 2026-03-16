@@ -47,7 +47,7 @@ export function SiteHeader() {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <a href={PAYPAL_ME_URL} target="_blank" rel="noreferrer">
-                  Buy Pro Code
+                  Get Pro
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -58,14 +58,14 @@ export function SiteHeader() {
           <ThemeToggle />
           <Button variant="ghost" asChild className="hidden md:inline-flex">
             <a href={PAYPAL_ME_URL} target="_blank" rel="noreferrer">
-              Buy Pro Code
+              Get Pro
             </a>
           </Button>
           <Button variant="accent" asChild className="px-3 max-[380px]:px-2.5 sm:px-5">
             <Link href="/dashboard">
               <span className="max-[380px]:hidden sm:hidden">Dashboard</span>
-              <span className="hidden max-[380px]:inline">Open</span>
-              <span className="hidden sm:inline">Open dashboard</span>
+              <span className="hidden max-[380px]:inline">Go</span>
+              <span className="hidden sm:inline">Dashboard</span>
             </Link>
           </Button>
         </div>
