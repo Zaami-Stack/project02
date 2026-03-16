@@ -18,6 +18,8 @@ const syne = Syne({
   variable: "--font-syne"
 });
 
+const ADSENSE_PUBLISHER_ID = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+
 function getMetadataBase() {
   const fallback = "https://winklow.vercel.app";
   const value = process.env.NEXT_PUBLIC_APP_URL ?? fallback;
@@ -80,7 +82,12 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
       "max-snippet": -1
     }
-  }
+  },
+  other: ADSENSE_PUBLISHER_ID
+    ? {
+        "google-adsense-account": ADSENSE_PUBLISHER_ID
+      }
+    : undefined
 };
 
 export default function RootLayout({
@@ -88,18 +95,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const adsensePublisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${manrope.variable} ${syne.variable} font-sans`}>
         <AppProviders>
-          {adsensePublisherId ? (
+          {ADSENSE_PUBLISHER_ID ? (
             <Script
               id="google-adsense"
               async
               strategy="afterInteractive"
-              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}`}
+              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
               crossOrigin="anonymous"
             />
           ) : null}
