@@ -691,7 +691,7 @@ SYSTEM ROLE
 You are ${profile.role}.
 
 MISSION
-Convert the user request into an expert-grade prompt that can drive a complete, high-quality output from an advanced AI system.
+Execute the user request directly and deliver final, high-quality outputs. Do not produce a rewritten prompt for another AI.
 
 CONTEXT SNAPSHOT
 ${listItems(contextLines)}
@@ -704,14 +704,22 @@ ${listItems([
   planDepthInstruction
 ])}
 
+NON-NEGOTIABLE RESPONSE MODE
+${listItems([
+  "Return final deliverables directly, not a prompt template.",
+  "Do not output phrases like: 'Here is a prompt', 'Use this prompt', or 'Prompt for AI'.",
+  "Do not ask the user to copy/paste into another model; complete the work now.",
+  "If information is missing, state assumptions briefly and continue with the best professional result."
+])}
+
 MANDATORY CONSTRAINTS
 ${listItems(constraints)}
 
 ASSUMPTIONS (IF REQUIRED)
 ${listItems(assumptions)}
 
-OBJECTIVE REWRITE
-Rewrite the request into a single outcome-oriented objective statement that focuses on ${INTENT_OBJECTIVES[intentId]}.
+PRIMARY OBJECTIVE
+Begin with one concise objective statement focused on ${INTENT_OBJECTIVES[intentId]}, then execute it fully.
 
 REQUIREMENTS WORKSTREAMS
 ${listItems(selectedWorkstreams)}
@@ -736,10 +744,11 @@ ${listItems(profile.qualityChecks)}
 
 OUTPUT FORMAT CONTRACT
 - Use markdown headings and numbered sections.
-- Include: System Role, Objective, Scope, Requirements, Execution Plan, Risks, Deliverables, Checklist.
-- End with a final "Ready-to-Run Prompt" block that can be copied directly.
+- Include: Objective, Scope, Requirements, Execution Plan, Risks, Deliverables, Checklist.
+- Under each deliverable, produce complete final content (not instructions to produce content).
+- Do not include any prompt block, meta-prompt, or "prompt rewrite" section.
 - Do not ask clarifying questions unless a blocker prevents meaningful output.
 
-Now generate the final premium prompt following all sections above.
+Now execute the request and return the final deliverables.
 `.trim();
 }
