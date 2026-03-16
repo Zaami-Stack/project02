@@ -7,17 +7,17 @@ import { PAYPAL_ME_URL } from "@/lib/constants";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-background/80 backdrop-blur-xl">
-      <div className="container flex h-20 items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-xl">
+      <div className="container flex h-16 items-center justify-between gap-4">
         <Logo />
-        <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-          <Link href="/#features" className="transition hover:text-foreground">
+        <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
+          <Link href="/#features" className="transition-colors hover:text-foreground">
             Features
           </Link>
-          <Link href="/#pricing" className="transition hover:text-foreground">
+          <Link href="/#pricing" className="transition-colors hover:text-foreground">
             Pricing
           </Link>
-          <Link href="/#faq" className="transition hover:text-foreground">
+          <Link href="/#faq" className="transition-colors hover:text-foreground">
             FAQ
           </Link>
         </nav>
@@ -28,7 +28,7 @@ export function SiteHeader() {
               Buy Pro Code
             </a>
           </Button>
-          <Button asChild>
+          <Button variant="accent" asChild>
             <Link href="/dashboard">Open dashboard</Link>
           </Button>
         </div>

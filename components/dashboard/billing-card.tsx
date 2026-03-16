@@ -100,7 +100,7 @@ export function BillingCard({
 
   return (
     <Card id="billing">
-      <CardHeader className="space-y-4">
+      <CardHeader className="space-y-4 border-b border-border/70 pb-5">
         <div className="flex items-center justify-between">
           <Badge variant={isPro ? "accent" : "secondary"}>{isPro ? "Pro unlocked" : "Free mode"}</Badge>
           {isPro ? <Crown className="h-5 w-5 text-accent" /> : <ShieldCheck className="h-5 w-5 text-primary" />}
@@ -113,7 +113,7 @@ export function BillingCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-[24px] border border-border/70 bg-background/75 p-5">
+        <div className="rounded-xl border border-border/80 bg-background p-5">
           <p className="text-sm font-medium">{isPro ? "Current mode: Pro" : "Current mode: Free"}</p>
           <p className="mt-2 text-sm leading-7 text-muted-foreground">
             {isPro
@@ -132,7 +132,7 @@ export function BillingCard({
           href={paypalUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-foreground shadow-[0_18px_36px_-18px_rgba(251,191,36,0.9)] transition hover:bg-accent/90"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border/80 bg-secondary px-5 py-2.5 text-sm font-semibold text-foreground transition hover:bg-secondary/75"
         >
           <Wallet className="h-4 w-4" />
           Buy Pro code on PayPal
@@ -180,4 +180,3 @@ export function BillingCard({
     </Card>
   );
 }
-

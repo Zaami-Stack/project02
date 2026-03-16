@@ -7,24 +7,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ring-offset-background",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ring-offset-background",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-[0_20px_40px_-20px_rgba(14,165,233,0.85)] hover:translate-y-[-1px] hover:bg-primary/90",
+          "bg-foreground text-background shadow-[0_14px_28px_-18px_hsl(var(--foreground)/0.55)] hover:bg-foreground/90",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-secondary/70 hover:text-foreground",
+        ghost: "text-muted-foreground hover:bg-secondary hover:text-foreground",
         outline:
-          "border border-border bg-background/70 shadow-sm hover:border-primary/40 hover:bg-background",
+          "border border-border bg-background text-foreground shadow-sm hover:bg-secondary/70",
         accent:
-          "bg-accent text-accent-foreground shadow-[0_18px_34px_-18px_rgba(251,191,36,0.9)] hover:bg-accent/90"
+          "bg-primary text-primary-foreground shadow-[0_14px_30px_-20px_hsl(var(--primary)/0.75)] hover:bg-primary/90"
       },
       size: {
-        default: "h-11 px-5 py-2",
-        sm: "h-9 px-4 text-xs",
-        lg: "h-12 px-6 text-base",
-        icon: "h-11 w-11"
+        default: "h-10 px-4 py-2",
+        sm: "h-8 px-3 text-xs",
+        lg: "h-11 px-5 text-sm",
+        icon: "h-10 w-10"
       }
     },
     defaultVariants: {
@@ -49,4 +49,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
-

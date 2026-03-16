@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Sora } from "next/font/google";
+import { Manrope, Syne } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
 import { AppProviders } from "@/components/providers/app-providers";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-space-grotesk"
+  variable: "--font-manrope"
 });
 
-const sora = Sora({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-sora"
+  variable: "--font-syne"
 });
 
 export const metadata: Metadata = {
   title: "PromptForge AI",
-  description: "Turn rough AI ideas into premium prompts with secure SaaS-grade infrastructure."
+  description: "Generate production-grade premium prompts with a clean, modern SaaS workspace."
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${spaceGrotesk.variable} ${sora.variable} font-sans`}>
+      <body className={`${manrope.variable} ${syne.variable} font-sans`}>
         <AppProviders>
           <div className="relative min-h-screen">
             <SiteHeader />
@@ -40,4 +40,3 @@ export default function RootLayout({
     </html>
   );
 }
-

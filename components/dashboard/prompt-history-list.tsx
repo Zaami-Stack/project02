@@ -47,7 +47,7 @@ export function PromptHistoryList({
 
   return (
     <Card id="history">
-      <CardHeader className="space-y-4">
+      <CardHeader className="space-y-4 border-b border-border/70 pb-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>Prompt history</CardTitle>
           <div className="relative w-full max-w-xs">
@@ -70,7 +70,7 @@ export function PromptHistoryList({
           <TabsContent value={tab}>
             <div className="mt-4 space-y-4">
               {filtered.length === 0 ? (
-                <div className="rounded-[24px] border border-dashed border-border/70 p-8 text-center text-sm text-muted-foreground">
+                <div className="rounded-xl border border-dashed border-border/70 p-8 text-center text-sm text-muted-foreground">
                   {tab === "favorites" ? "No favorites yet." : "Your generated prompts will appear here."}
                 </div>
               ) : (
@@ -78,7 +78,7 @@ export function PromptHistoryList({
                   <div
                     key={prompt.id}
                     className={cn(
-                      "rounded-[24px] border border-border/70 bg-background/70 p-5 transition",
+                      "rounded-xl border border-border/80 bg-background p-5 transition",
                       activePromptId === prompt.id && "border-primary/35 bg-primary/[0.04]"
                     )}
                   >
@@ -88,7 +88,7 @@ export function PromptHistoryList({
                         className="flex-1 text-left"
                         onClick={() => onSelect(prompt)}
                       >
-                        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{formatDate(prompt.created_at)}</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{formatDate(prompt.created_at)}</p>
                         <h3 className="mt-2 text-lg font-semibold">{prompt.input_prompt}</h3>
                         <p className="mt-2 line-clamp-3 text-sm leading-7 text-muted-foreground">{prompt.generated_prompt}</p>
                       </button>
@@ -120,4 +120,3 @@ export function PromptHistoryList({
     </Card>
   );
 }
-

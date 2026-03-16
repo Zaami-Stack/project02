@@ -39,16 +39,16 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-20">
+    <section id="features" className="border-y border-border/75 py-20">
       <div className="container space-y-10">
         <SectionReveal>
           <div className="max-w-2xl space-y-4">
             <Badge variant="secondary">Why teams choose PromptForge</Badge>
             <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
-              Built for shipping real work, not just prettier prompts.
+              Designed for reliable output, not prompt theater.
             </h2>
             <p className="text-lg leading-8 text-muted-foreground">
-              The platform combines secure SaaS foundations with a prompt engine that can support app builds, plans, stories, and complex generation workflows.
+              Every layer is built for consistency: secure quotas, deterministic upgrades, and a workspace that stays fast as your usage grows.
             </p>
           </div>
         </SectionReveal>
@@ -57,10 +57,10 @@ export function FeaturesSection() {
             <SectionReveal key={title} delay={index * 0.05}>
               <Card className="h-full">
                 <CardHeader className="space-y-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <Icon className="h-6 w-6" />
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border/80 bg-secondary/70 text-foreground">
+                    <Icon className="h-5 w-5" />
                   </div>
-                  <CardTitle className="text-2xl">{title}</CardTitle>
+                  <CardTitle className="text-xl">{title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="leading-7 text-muted-foreground">{description}</p>

@@ -45,21 +45,21 @@ export function PricingSection() {
           <div className="mx-auto max-w-2xl space-y-4 text-center">
             <Badge className="mx-auto">Simple pricing</Badge>
             <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
-              Start free now, unlock Pro with a private code when ready.
+              One product. Two clear modes.
             </h2>
             <p className="text-lg leading-8 text-muted-foreground">
-              Free works instantly. Pro is activated after PayPal payment using your private access code.
+              Free starts instantly. Pro activates in seconds with your private access code after payment.
             </p>
           </div>
         </SectionReveal>
         <div className="grid gap-6 lg:grid-cols-2">
           {plans.map((plan, index) => (
             <SectionReveal key={plan.name} delay={index * 0.08}>
-              <Card className={plan.featured ? "border-primary/30 bg-primary/[0.04]" : ""}>
+              <Card className={plan.featured ? "border-primary/25 bg-primary/[0.05]" : ""}>
                 <CardHeader className="space-y-4">
                   <div className="flex items-center justify-between">
                     <CardTitle>{plan.name}</CardTitle>
-                    {plan.featured ? <Badge variant="accent">Most popular</Badge> : null}
+                    {plan.featured ? <Badge variant="accent">Preferred</Badge> : null}
                   </div>
                   <div className="flex items-end gap-2">
                     <span className="font-display text-5xl font-semibold">{plan.price}</span>

@@ -77,14 +77,14 @@ export function PromptWorkbench({
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="space-y-3">
-        <CardTitle>Prompt upgrade studio</CardTitle>
+      <CardHeader className="space-y-3 border-b border-border/70 pb-5">
+        <CardTitle>Prompt Editor</CardTitle>
         <CardDescription>
           Describe the output you want. PromptForge will turn it into a premium prompt with role, requirements, architecture, UX, security, and delivery guidance.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
+        <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr] xl:items-start">
           <div className="space-y-4">
             <label htmlFor="prompt-input" className="text-sm font-medium">
               Your starter prompt
@@ -101,21 +101,21 @@ export function PromptWorkbench({
               Upgrade prompt
             </Button>
           </div>
-          <div className="rounded-[28px] border border-border/70 bg-background/80 p-5">
+          <div className="rounded-2xl border border-border/80 bg-background p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-medium">Premium output</p>
-                <p className="text-sm text-muted-foreground">Structured for serious AI execution</p>
+                <p className="text-sm font-semibold">Premium output</p>
+                <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground">Structured output format</p>
               </div>
               <Button variant="outline" size="sm" onClick={handleCopy} disabled={!activePrompt || isPending}>
                 <Copy className="h-4 w-4" />
                 {copied ? "Copied" : "Copy"}
               </Button>
             </div>
-            <div className="mt-4 min-h-[280px] rounded-[24px] border border-dashed border-border/70 bg-card/60 p-5">
+            <div className="mt-4 min-h-[280px] rounded-xl border border-dashed border-border/70 bg-card/60 p-5">
               {isGenerating ? (
                 <div className="flex h-full min-h-[240px] flex-col items-center justify-center gap-4 text-center">
-                  <div className="h-14 w-14 rounded-full bg-primary/10 p-4 text-primary">
+                  <div className="h-12 w-12 rounded-full bg-secondary p-3 text-foreground">
                     <Spinner className="h-6 w-6" />
                   </div>
                   <div className="space-y-2">

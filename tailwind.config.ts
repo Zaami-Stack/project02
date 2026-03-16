@@ -60,8 +60,8 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)"
       },
       fontFamily: {
-        sans: ["var(--font-space-grotesk)"],
-        display: ["var(--font-sora)"]
+        sans: ["var(--font-manrope)"],
+        display: ["var(--font-syne)"]
       },
       keyframes: {
         "accordion-down": {
@@ -88,9 +88,9 @@ const config: Config = {
         shimmer: "shimmer 2s linear infinite"
       },
       backgroundImage: {
-        grid: "radial-gradient(circle at center, rgba(255,255,255,0.1) 1px, transparent 1px)",
+        grid: "linear-gradient(to right, rgba(15,23,42,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.06) 1px, transparent 1px)",
         "noise-gradient":
-          "radial-gradient(circle at top left, rgba(72,187,120,0.18), transparent 36%), radial-gradient(circle at top right, rgba(56,189,248,0.16), transparent 32%), radial-gradient(circle at bottom, rgba(251,191,36,0.1), transparent 30%)"
+          "radial-gradient(circle at top left, rgba(15,23,42,0.09), transparent 38%), radial-gradient(circle at bottom right, rgba(16,185,129,0.12), transparent 34%)"
       }
     }
   },
@@ -98,4 +98,3 @@ const config: Config = {
 };
 
 export default config;
-

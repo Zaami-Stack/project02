@@ -10,14 +10,14 @@ export function UsageMeter({ usage }: { usage: UsageSummary }) {
 
   return (
     <Card>
-      <CardHeader className="space-y-3">
+      <CardHeader className="space-y-3 border-b border-border/70 pb-5">
         <div className="flex items-center justify-between">
           <Badge variant={usage.plan === "pro" ? "accent" : "default"}>
             {usage.plan === "pro" ? "Pro plan" : "Free plan"}
           </Badge>
           {usage.plan === "pro" ? <Crown className="h-5 w-5 text-accent" /> : <Sparkles className="h-5 w-5 text-primary" />}
         </div>
-        <CardTitle className="text-2xl">Daily prompt usage</CardTitle>
+        <CardTitle className="text-[1.35rem]">Daily prompt usage</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -27,9 +27,9 @@ export function UsageMeter({ usage }: { usage: UsageSummary }) {
               {usage.plan === "pro" ? `${usage.usedToday} prompts` : `${usage.usedToday} / ${usage.dailyLimit ?? FREE_DAILY_LIMIT}`}
             </span>
           </div>
-          <div className="h-3 overflow-hidden rounded-full bg-secondary">
+          <div className="h-2.5 overflow-hidden rounded-full bg-secondary">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-sky-400 to-cyan-300 transition-all"
+              className="h-full rounded-full bg-foreground transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>

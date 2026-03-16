@@ -11,7 +11,7 @@ export function FaqSection() {
           <div className="max-w-2xl space-y-4">
             <Badge variant="secondary">FAQ</Badge>
             <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
-              Everything you need before launching PromptForge AI.
+              Straight answers before you launch.
             </h2>
           </div>
         </SectionReveal>
@@ -20,7 +20,7 @@ export function FaqSection() {
             <SectionReveal key={item.question} delay={index * 0.04}>
               <Card className="h-full">
                 <CardContent className="space-y-3 p-6">
-                  <h3 className="font-display text-2xl font-semibold">{item.question}</h3>
+                  <h3 className="font-display text-xl font-semibold">{item.question}</h3>
                   <p className="leading-7 text-muted-foreground">{item.answer}</p>
                 </CardContent>
               </Card>
@@ -31,4 +31,3 @@ export function FaqSection() {
     </section>
   );
 }
-

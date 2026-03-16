@@ -174,18 +174,18 @@ export function DashboardShell() {
       <section className="section-shell overflow-hidden">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-5">
-            <Badge variant="outline" className="border-primary/20 bg-primary/10 text-primary">
-              PromptForge workspace
-            </Badge>
-            <div className="space-y-3">
-              <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">Build premium prompts on demand.</h1>
+            <Badge variant="outline">PromptForge Workspace</Badge>
+            <div className="space-y-4">
+              <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+                Premium prompt operations, in one dashboard.
+              </h1>
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                No account required. Use free mode instantly, then unlock unlimited Pro access with your private code.
+                Start in free mode, save prompt history on this device, and unlock Pro instantly with your private code.
               </p>
             </div>
           </div>
-          <div className="rounded-[24px] border border-border/70 bg-background/70 p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Device status</p>
+          <div className="rounded-2xl border border-border/80 bg-background p-5">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Device status</p>
             <p className="mt-2 text-lg font-semibold">
               {isBootstrapping ? "Initializing secure session..." : access.plan === "pro" ? "Pro unlocked" : "Free mode"}
             </p>

@@ -5,48 +5,48 @@
 @tailwind utilities;
 
 :root {
-  --background: 204 38% 97%;
-  --foreground: 215 33% 11%;
+  --background: 220 23% 98%;
+  --foreground: 222 40% 11%;
   --card: 0 0% 100%;
-  --card-foreground: 215 33% 11%;
+  --card-foreground: 222 40% 11%;
   --popover: 0 0% 100%;
-  --popover-foreground: 215 33% 11%;
-  --primary: 198 93% 45%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 202 45% 94%;
-  --secondary-foreground: 215 33% 11%;
-  --muted: 203 36% 92%;
-  --muted-foreground: 215 18% 38%;
-  --accent: 38 92% 58%;
-  --accent-foreground: 215 33% 11%;
-  --destructive: 0 84% 60%;
+  --popover-foreground: 222 40% 11%;
+  --primary: 158 74% 34%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 16% 94%;
+  --secondary-foreground: 222 24% 20%;
+  --muted: 220 14% 92%;
+  --muted-foreground: 222 15% 41%;
+  --accent: 158 80% 95%;
+  --accent-foreground: 158 74% 24%;
+  --destructive: 0 76% 55%;
   --destructive-foreground: 210 40% 98%;
-  --border: 201 31% 84%;
-  --input: 201 31% 84%;
-  --ring: 198 93% 45%;
-  --radius: 1rem;
+  --border: 220 14% 86%;
+  --input: 220 14% 86%;
+  --ring: 158 74% 34%;
+  --radius: 0.9rem;
 }
 
 .dark {
-  --background: 216 35% 8%;
-  --foreground: 210 40% 96%;
-  --card: 215 28% 12%;
-  --card-foreground: 210 40% 96%;
-  --popover: 215 28% 12%;
-  --popover-foreground: 210 40% 96%;
-  --primary: 194 87% 58%;
-  --primary-foreground: 215 33% 11%;
-  --secondary: 216 22% 18%;
-  --secondary-foreground: 210 40% 96%;
-  --muted: 216 22% 18%;
-  --muted-foreground: 214 20% 74%;
-  --accent: 41 92% 62%;
-  --accent-foreground: 215 33% 11%;
+  --background: 222 28% 8%;
+  --foreground: 210 22% 95%;
+  --card: 223 24% 10%;
+  --card-foreground: 210 22% 95%;
+  --popover: 223 24% 10%;
+  --popover-foreground: 210 22% 95%;
+  --primary: 158 66% 44%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 222 16% 16%;
+  --secondary-foreground: 210 22% 95%;
+  --muted: 222 16% 16%;
+  --muted-foreground: 214 18% 72%;
+  --accent: 158 32% 18%;
+  --accent-foreground: 154 75% 75%;
   --destructive: 0 72% 51%;
   --destructive-foreground: 210 40% 98%;
-  --border: 217 17% 24%;
-  --input: 217 17% 24%;
-  --ring: 194 87% 58%;
+  --border: 223 15% 22%;
+  --input: 223 15% 22%;
+  --ring: 158 66% 44%;
 }
 
 * {
@@ -60,35 +60,36 @@ html {
 body {
   @apply bg-background text-foreground antialiased;
   background-image:
-    radial-gradient(circle at top left, rgba(11, 178, 245, 0.08), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.08), transparent 25%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent);
+    radial-gradient(circle at top, rgba(15, 23, 42, 0.06), transparent 42%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.02), transparent 40%);
   min-height: 100vh;
 }
 
 .dark body {
   background-image:
-    radial-gradient(circle at top left, rgba(34, 211, 238, 0.1), transparent 25%),
-    radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.08), transparent 20%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(3, 7, 18, 1));
+    radial-gradient(circle at top, rgba(148, 163, 184, 0.14), transparent 35%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.55), rgba(2, 6, 23, 1));
 }
 
 .glass-panel {
-  @apply border border-white/10 bg-white/70 backdrop-blur-xl dark:bg-slate-950/50;
+  @apply border border-border/80 bg-card/95 backdrop-blur-xl;
 }
 
 .section-shell {
-  @apply rounded-[28px] border border-white/15 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(8,47,73,0.45)] backdrop-blur-xl dark:bg-slate-950/50;
+  @apply rounded-2xl border border-border/85 bg-card/95 p-6 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.45)] backdrop-blur;
 }
 
 .hero-grid {
-  background-image:
-    linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+  background-image: linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.dark .hero-grid {
+  background-image: linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
-  background-size: 40px 40px;
 }
 
 ::selection {
   background: hsl(var(--primary) / 0.2);
 }
-

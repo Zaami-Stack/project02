@@ -10,14 +10,14 @@ export function TransformSection() {
     <section id="transformation" className="py-20">
       <div className="container">
         <SectionReveal>
-          <div className="mb-8 flex flex-col gap-4">
-            <Badge>Basic prompt in, premium prompt out</Badge>
+          <div className="mb-10 flex flex-col gap-4">
+            <Badge>How prompt upgrading works</Badge>
             <div className="max-w-2xl space-y-3">
               <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
-                Structure, strategy, and execution detail in one upgrade.
+                From rough sentence to execution-ready instruction set.
               </h2>
               <p className="text-lg leading-8 text-muted-foreground">
-                PromptForge does not just make prompts longer. It turns vague requests into scoped instructions an AI can execute with more consistency.
+                PromptForge turns vague requests into scoped output that reads like a professional brief, not a random expansion.
               </p>
             </div>
           </div>
@@ -29,28 +29,28 @@ export function TransformSection() {
                 <CardTitle>Starter prompt</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <p className="rounded-[24px] border border-dashed border-border px-5 py-8 text-lg font-medium">
+                <p className="rounded-xl border border-dashed border-border px-5 py-8 text-lg font-medium">
                   &quot;{MARKETING_EXAMPLE.input}&quot;
                 </p>
                 <div className="space-y-3 text-sm text-muted-foreground">
-                  <p>Short inputs are fast to type, but they leave too much unspecified.</p>
-                  <p>Models must guess architecture, UX, quality level, and deployment expectations.</p>
+                  <p>Short prompts are fast, but they leave delivery quality undefined.</p>
+                  <p>The model has to guess scope, constraints, and expected output depth.</p>
                 </div>
               </CardContent>
             </Card>
           </SectionReveal>
           <div className="hidden items-center justify-center lg:flex">
-            <div className="rounded-full border border-primary/20 bg-primary/10 p-4 text-primary shadow-[0_20px_60px_-30px_rgba(14,165,233,0.85)]">
+            <div className="rounded-xl border border-border/80 bg-card p-4 text-foreground shadow-sm">
               <ArrowRight className="h-8 w-8" />
             </div>
           </div>
           <SectionReveal delay={0.1}>
-            <Card className="h-full border-primary/20 bg-primary/[0.04]">
+            <Card className="h-full border-primary/20 bg-primary/[0.05]">
               <CardHeader>
                 <CardTitle>Premium prompt</CardTitle>
               </CardHeader>
               <CardContent className="space-y-5">
-                <div className="rounded-[24px] border border-primary/20 bg-background/80 p-5">
+                <div className="rounded-xl border border-primary/20 bg-background p-5">
                   <p className="text-sm leading-7">{MARKETING_EXAMPLE.output}</p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-3">
