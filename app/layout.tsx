@@ -19,6 +19,7 @@ const syne = Syne({
 
 const ADSENSE_PUBLISHER_ID =
   process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? "ca-pub-7336372781083421";
+const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 function getMetadataBase() {
   const fallback = "https://winklow.vercel.app";
@@ -38,8 +39,11 @@ export const metadata: Metadata = {
     template: `%s | ${APP_NAME}`
   },
   description: APP_TAGLINE,
+  category: "technology",
   applicationName: APP_NAME,
   keywords: [
+    "Winklow",
+    "Winklow AI",
     "AI prompt generator",
     "prompt engineering tool",
     "premium prompts",
@@ -76,6 +80,11 @@ export const metadata: Metadata = {
     icon: "/icon.svg",
     shortcut: "/icon.svg"
   },
+  verification: GOOGLE_SITE_VERIFICATION
+    ? {
+        google: GOOGLE_SITE_VERIFICATION
+      }
+    : undefined,
   robots: {
     index: true,
     follow: true,

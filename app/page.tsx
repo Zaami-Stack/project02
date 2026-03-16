@@ -10,15 +10,18 @@ import { AdsenseUnit } from "@/components/ads/adsense-unit";
 import { APP_NAME, APP_TAGLINE, FAQ_ITEMS } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "AI Prompt Studio",
-  description: APP_TAGLINE,
+  title: {
+    absolute: `${APP_NAME} | AI Prompt Studio`
+  },
+  description: `Official ${APP_NAME} website. ${APP_TAGLINE}`,
   alternates: {
     canonical: "/"
   }
 };
 
 export default function HomePage() {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://winklow.vercel.app";
+  const siteUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://winklow.vercel.app").replace(/\/$/, "");
+  const siteLogo = `${siteUrl}/icon.svg`;
   const topAdSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME_TOP;
   const middleAdSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME_MIDDLE;
   const shouldRenderTopAd = Boolean(topAdSlot);
@@ -28,20 +31,38 @@ export default function HomePage() {
     "@graph": [
       {
         "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
         name: APP_NAME,
+        alternateName: "Winklow AI",
         url: siteUrl,
+        logo: siteLogo,
         sameAs: ["https://paypal.me/AnasZaami"]
       },
       {
         "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
         name: APP_NAME,
-        url: siteUrl
+        alternateName: "Winklow",
+        url: siteUrl,
+        publisher: {
+          "@id": `${siteUrl}/#organization`
+        },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${siteUrl}/?q={search_term_string}`,
+          "query-input": "required name=search_term_string"
+        }
       },
       {
         "@type": "SoftwareApplication",
+        "@id": `${siteUrl}/#application`,
         name: APP_NAME,
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
+        url: siteUrl,
+        brand: {
+          "@id": `${siteUrl}/#organization`
+        },
         offers: [
           {
             "@type": "Offer",

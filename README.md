@@ -135,6 +135,25 @@ Tips:
 4. Deploy.
 5. Set `NEXT_PUBLIC_APP_URL` to your production domain (for example `https://project02.vercel.app`).
 
+## Google indexing checklist (Winklow)
+
+To improve discovery when people search `Winklow`:
+
+1. In Vercel, set:
+   - `NEXT_PUBLIC_APP_URL=https://winklow.vercel.app`
+   - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=<token from Search Console>`
+2. In Google Search Console, add property `https://winklow.vercel.app`.
+3. Verify ownership with the HTML meta tag method (the env var above).
+4. Submit sitemap: `https://winklow.vercel.app/sitemap.xml`.
+5. Run URL Inspection on:
+   - `https://winklow.vercel.app/`
+   - `https://winklow.vercel.app/contact`
+6. Click "Request indexing" and wait for crawl processing.
+
+Notes:
+- Indexing is not instant; Google usually takes from a few hours to several days.
+- Ranking position is never guaranteed, but these are the core production SEO requirements.
+
 ## Routes
 
 - `GET /dashboard` -> main app
