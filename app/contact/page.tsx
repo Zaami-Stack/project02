@@ -19,15 +19,15 @@ export default function ContactPage() {
         <article className="section-shell space-y-8">
           <header className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Support</p>
-            <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">Contact {APP_NAME}</h1>
+            <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">Contact {APP_NAME}</h1>
             <p className="leading-7 text-muted-foreground">
               For billing, support, or partnership requests, use one of the channels below.
             </p>
           </header>
 
           <section className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-border/80 bg-background p-6">
-              <h2 className="font-display text-2xl font-semibold">Billing Support</h2>
+            <div className="rounded-2xl border border-border/80 bg-background p-5 sm:p-6">
+              <h2 className="font-display text-xl font-semibold sm:text-2xl">Billing Support</h2>
               <p className="mt-3 leading-7 text-muted-foreground">
                 For Pro code purchases or payment questions, contact us through PayPal.
               </p>
@@ -38,8 +38,8 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border/80 bg-background p-6">
-              <h2 className="font-display text-2xl font-semibold">Technical Support</h2>
+            <div className="rounded-2xl border border-border/80 bg-background p-5 sm:p-6">
+              <h2 className="font-display text-xl font-semibold sm:text-2xl">Technical Support</h2>
               <p className="mt-3 leading-7 text-muted-foreground">
                 For bugs, access issues, or technical problems, submit details through GitHub issues.
               </p>

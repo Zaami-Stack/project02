@@ -42,9 +42,9 @@ export function PricingSection() {
     <section id="pricing" className="py-16 sm:py-20">
       <div className="container space-y-10">
         <SectionReveal>
-          <div className="mx-auto max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card p-7 text-center sm:p-9">
+          <div className="mx-auto max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card p-5 text-center sm:p-8 lg:p-9">
             <Badge className="mx-auto">Simple pricing</Badge>
-            <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
+            <h2 className="text-balance font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
               One product. Two clear modes.
             </h2>
             <p className="text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">

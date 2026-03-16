@@ -42,9 +42,9 @@ export function FeaturesSection() {
     <section id="features" className="border-y border-border/75 py-16 sm:py-20">
       <div className="container space-y-10">
         <SectionReveal>
-          <div className="max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card p-7 sm:p-9">
+          <div className="max-w-2xl space-y-4 rounded-3xl border border-border/80 bg-card p-5 sm:p-8 lg:p-9">
             <Badge variant="secondary">Why teams choose Winklow</Badge>
-            <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
+            <h2 className="text-balance font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
               Designed for reliable output, not prompt theater.
             </h2>
             <p className="text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">

@@ -63,9 +63,13 @@ export function PromptHistoryList({
       </CardHeader>
       <CardContent>
         <Tabs value={tab} onValueChange={(value) => setTab(value as HistoryTab)}>
-          <TabsList>
-            <TabsTrigger value="recent">Recent</TabsTrigger>
-            <TabsTrigger value="favorites">Favorites</TabsTrigger>
+          <TabsList className="w-full sm:w-auto">
+            <TabsTrigger value="recent" className="flex-1 sm:flex-none">
+              Recent
+            </TabsTrigger>
+            <TabsTrigger value="favorites" className="flex-1 sm:flex-none">
+              Favorites
+            </TabsTrigger>
           </TabsList>
           <TabsContent value={tab}>
             <div className="mt-4 space-y-4">

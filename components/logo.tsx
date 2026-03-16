@@ -27,7 +27,7 @@ export function Logo({
         </span>
       </span>
       <span className="flex flex-col">
-        <span className="font-display text-base font-semibold leading-none tracking-tight max-[380px]:hidden sm:text-lg">{APP_NAME}</span>
+        <span className="font-display text-base font-semibold leading-none tracking-tight max-[520px]:hidden sm:text-lg">{APP_NAME}</span>
         <span className="hidden pt-1 text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground sm:inline">
           Prompt Studio
         </span>

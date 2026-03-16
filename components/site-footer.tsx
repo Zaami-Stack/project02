@@ -11,7 +11,7 @@ export function SiteFooter() {
           <Logo className="w-fit" />
           <p className="text-sm text-muted-foreground">Built for teams shipping serious AI outputs.</p>
         </div>
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Product</p>
             <div className="space-y-2 text-sm font-medium text-muted-foreground">

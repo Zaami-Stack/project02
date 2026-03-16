@@ -28,10 +28,10 @@ export function SiteHeader() {
             FAQ
           </Link>
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="md:hidden" aria-label="Open menu">
+              <Button variant="outline" size="icon" className="h-9 w-9 md:hidden" aria-label="Open menu">
                 <Menu className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -55,15 +55,15 @@ export function SiteHeader() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <ThemeToggle />
+          <ThemeToggle className="max-[420px]:hidden" />
           <Button variant="ghost" asChild className="hidden md:inline-flex">
             <a href={PAYPAL_ME_URL} target="_blank" rel="noreferrer">
               Get Pro
             </a>
           </Button>
-          <Button variant="accent" asChild className="px-3 max-[380px]:px-2.5 sm:px-5">
+          <Button variant="accent" asChild className="h-9 px-2.5 text-xs max-[380px]:px-2 sm:h-10 sm:px-4 sm:text-sm">
             <Link href="/dashboard">
-              <span className="max-[380px]:hidden sm:hidden">Dashboard</span>
+              <span className="max-[380px]:hidden sm:hidden">Open</span>
               <span className="hidden max-[380px]:inline">Go</span>
               <span className="hidden sm:inline">Dashboard</span>
             </Link>

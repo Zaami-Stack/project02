@@ -10,11 +10,11 @@ export function TransformSection() {
     <section id="transformation" className="py-16 sm:py-20">
       <div className="container">
         <SectionReveal>
-          <div className="mb-10 space-y-6 rounded-3xl border border-border/80 bg-card p-7 sm:p-10">
+          <div className="mb-10 space-y-6 rounded-3xl border border-border/80 bg-card p-5 sm:p-8 lg:p-10">
             <Badge className="w-fit">How prompt upgrading works</Badge>
             <div className="grid gap-7 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
               <div className="space-y-3">
-                <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
+                <h2 className="text-balance font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
                   From rough sentence to execution-ready instruction set.
                 </h2>
                 <p className="text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
@@ -39,7 +39,7 @@ export function TransformSection() {
                 <CardTitle>Starter prompt</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <p className="rounded-2xl border border-dashed border-border px-5 py-8 text-lg font-medium">
+                <p className="rounded-2xl border border-dashed border-border px-4 py-6 text-base font-medium sm:px-5 sm:py-8 sm:text-lg">
                   &quot;{MARKETING_EXAMPLE.input}&quot;
                 </p>
                 <div className="space-y-3 text-sm text-muted-foreground">

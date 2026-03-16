@@ -27,12 +27,15 @@ export function HeroSection() {
             transition={{ duration: 0.45 }}
             className="space-y-7"
           >
-            <Badge variant="secondary" className="w-fit px-3 py-1 text-xs uppercase tracking-[0.16em]">
+            <Badge
+              variant="secondary"
+              className="w-fit max-w-full truncate px-3 py-1 text-[10px] uppercase tracking-[0.16em] sm:text-xs"
+            >
               Winklow Platform
             </Badge>
 
             <div className="space-y-4">
-              <h1 className="max-w-3xl font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+              <h1 className="max-w-3xl text-balance font-display text-3xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
                 Build expert-level prompts from any idea.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{APP_TAGLINE}</p>
@@ -70,7 +73,10 @@ export function HeroSection() {
             <Card className="overflow-hidden border-border/85 bg-card/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.65)]">
               <CardHeader className="space-y-4 border-b border-border/70 pb-5">
                 <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="text-[10px] uppercase tracking-[0.15em]">
+                  <Badge
+                    variant="outline"
+                    className="max-w-[calc(100%-2rem)] truncate text-[9px] uppercase tracking-[0.14em] sm:text-[10px]"
+                  >
                     Live transformation preview
                   </Badge>
                   <Sparkles className="h-4 w-4 text-primary" />
