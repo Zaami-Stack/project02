@@ -25,6 +25,20 @@ type DomainProfile = {
   qualityChecks: string[];
 };
 
+type DynamicModule = {
+  title: string;
+  focus: string[];
+  outputs: string[];
+};
+
+type PromptFrame = {
+  name: string;
+  objectiveLabel: string;
+  moduleLabel: string;
+  phaseLabel: string;
+  deliverableLabel: string;
+};
+
 const DOMAIN_KEYWORDS: Record<DomainId, string[]> = {
   software: [
     "app",
@@ -572,6 +586,241 @@ function extractTopicTerms(tokens: string[]) {
   ).slice(0, 8);
 }
 
+function hashString(input: string) {
+  let hash = 0;
+  for (let index = 0; index < input.length; index += 1) {
+    hash = (hash * 31 + input.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function pickBySeed<T>(items: T[], seed: number, offset = 0) {
+  if (items.length === 0) {
+    throw new Error("Cannot pick from an empty array.");
+  }
+  return items[(seed + offset) % items.length];
+}
+
+function hasAnyToken(tokens: string[], values: string[]) {
+  return values.some((value) => tokens.includes(value));
+}
+
+function buildDirectiveTitle(inputPrompt: string) {
+  const normalized = cleanWhitespace(inputPrompt).replace(/[^\w\s:/,+.-]/g, "");
+  const title = sentenceCase(normalized);
+  return title.length > 90 ? `${title.slice(0, 87)}...` : title;
+}
+
+function inferDynamicModules({
+  domainId,
+  intentId,
+  tokens,
+  topicTerms,
+  audience,
+  techStack
+}: {
+  domainId: DomainId;
+  intentId: IntentId;
+  tokens: string[];
+  topicTerms: string[];
+  audience: string | null;
+  techStack: string[];
+}) {
+  const subject = topicTerms.length > 0 ? topicTerms.join(", ") : "the requested initiative";
+  const modules: DynamicModule[] = [];
+
+  if (domainId === "software") {
+    modules.push(
+      {
+        title: "Product flows and core use cases",
+        focus: [
+          `Define user journeys, feature boundaries, and acceptance criteria for ${subject}.`,
+          audience ? `Tailor workflows for ${audience}.` : "Prioritize practical user-facing workflows."
+        ],
+        outputs: ["User journey map", "Feature matrix", "Acceptance criteria set"]
+      },
+      {
+        title: "System architecture and API contracts",
+        focus: [
+          "Design service boundaries, request/response contracts, and validation strategy.",
+          techStack.length > 0 ? `Respect stack choices: ${techStack.join(", ")}.` : "Choose production-safe defaults."
+        ],
+        outputs: ["Architecture diagram description", "API endpoint spec", "Error-handling rules"]
+      },
+      {
+        title: "Data model and persistence logic",
+        focus: [
+          "Define entities, relationships, and indexing strategy.",
+          "Include migration and data integrity safeguards."
+        ],
+        outputs: ["Database schema", "Migration notes", "Data access policy"]
+      },
+      {
+        title: "Delivery, QA, and deployment controls",
+        focus: [
+          "Create implementation phases with testing gates and release criteria.",
+          "Define monitoring, rollback, and incident response basics."
+        ],
+        outputs: ["Implementation backlog", "Test plan", "Launch checklist"]
+      }
+    );
+
+    if (hasAnyToken(tokens, ["auth", "login", "signup", "permission", "role", "user"])) {
+      modules.push({
+        title: "Authentication and access control",
+        focus: [
+          "Define user identity flow, session strategy, and authorization boundaries.",
+          "Include role rules, sensitive actions, and abuse prevention."
+        ],
+        outputs: ["Auth flow spec", "Role/permission matrix", "Security rule set"]
+      });
+    }
+
+    if (hasAnyToken(tokens, ["payment", "billing", "subscription", "checkout", "paypal", "stripe"])) {
+      modules.push({
+        title: "Payments and monetization",
+        focus: [
+          "Define pricing logic, checkout states, and failed-payment handling.",
+          "Include webhook states, retries, and reconciliation."
+        ],
+        outputs: ["Billing flow", "Subscription state machine", "Payment failure playbook"]
+      });
+    }
+  } else if (domainId === "business") {
+    modules.push(
+      {
+        title: "Market and positioning thesis",
+        focus: [
+          `Define target segment and core differentiation around ${subject}.`,
+          "Articulate value proposition and competitive stance."
+        ],
+        outputs: ["Market thesis", "ICP profile", "Positioning statement"]
+      },
+      {
+        title: "Monetization and unit economics",
+        focus: [
+          "Build pricing model, margin assumptions, and conversion targets.",
+          "List key financial sensitivities and guardrails."
+        ],
+        outputs: ["Pricing model", "Unit economics table", "Assumption register"]
+      },
+      {
+        title: "Go-to-market execution plan",
+        focus: [
+          "Map channel strategy, campaign phases, and ownership.",
+          "Define near-term milestones and review cadence."
+        ],
+        outputs: ["GTM plan", "90-day roadmap", "KPI dashboard outline"]
+      }
+    );
+  } else if (domainId === "marketing") {
+    modules.push(
+      {
+        title: "Audience and message architecture",
+        focus: [
+          "Define audience segments, pain points, and offer-message fit.",
+          "Create message hierarchy by funnel stage."
+        ],
+        outputs: ["Segment map", "Message framework", "Offer hierarchy"]
+      },
+      {
+        title: "Campaign execution system",
+        focus: [
+          "Design channel mix, budget split, and experiment cadence.",
+          "Specify creative and landing flow requirements."
+        ],
+        outputs: ["Channel plan", "Campaign calendar", "Creative matrix"]
+      },
+      {
+        title: "Measurement and optimization",
+        focus: [
+          "Define attribution model, reporting windows, and optimization triggers.",
+          "Include stop-loss controls and scale-up criteria."
+        ],
+        outputs: ["Metric framework", "Experiment log format", "Optimization rules"]
+      }
+    );
+  } else if (domainId === "creative") {
+    modules.push(
+      {
+        title: "Creative direction and structure",
+        focus: [
+          `Define voice, tone, and structure tailored to ${subject}.`,
+          "Set pacing and emotional progression objectives."
+        ],
+        outputs: ["Creative brief", "Structured outline", "Style guardrails"]
+      },
+      {
+        title: "Draft production",
+        focus: [
+          "Produce complete content sections, not summaries or placeholders.",
+          "Ensure coherence, originality, and thematic consistency."
+        ],
+        outputs: ["Full draft output", "Section transitions", "Continuity notes"]
+      },
+      {
+        title: "Revision and quality polish",
+        focus: [
+          "Run consistency checks and tighten language quality.",
+          "Resolve contradictions and weak sections."
+        ],
+        outputs: ["Revision checklist", "Quality improvements", "Final polished version"]
+      }
+    );
+  } else {
+    modules.push(
+      {
+        title: "Problem framing and success criteria",
+        focus: [
+          `Clarify outcome scope for ${subject}.`,
+          "Define measurable success criteria and constraints."
+        ],
+        outputs: ["Problem statement", "Scope boundaries", "Success criteria"]
+      },
+      {
+        title: "Execution design",
+        focus: [
+          "Break the work into practical phases with owners and dependencies.",
+          "Define priority order and decision checkpoints."
+        ],
+        outputs: ["Execution roadmap", "Prioritized task list", "Dependency map"]
+      },
+      {
+        title: "Validation and risk handling",
+        focus: [
+          "Define quality checks, failure modes, and mitigation actions.",
+          "Include review cadence and adjustment criteria."
+        ],
+        outputs: ["Risk register", "Quality checklist", "Review plan"]
+      }
+    );
+  }
+
+  if (intentId === "analyze") {
+    modules.push({
+      title: "Analysis evidence and conclusions",
+      focus: [
+        "Separate evidence, interpretation, and recommendations.",
+        "Show confidence level and explicit limitations."
+      ],
+      outputs: ["Findings table", "Evidence-backed conclusions", "Recommendation priorities"]
+    });
+  }
+
+  if (intentId === "automate") {
+    modules.push({
+      title: "Automation reliability controls",
+      focus: [
+        "Define triggers, retries, fallback paths, and alerting strategy.",
+        "Document observability and ownership for failed runs."
+      ],
+      outputs: ["Automation workflow map", "Failure-handling policy", "Monitoring checklist"]
+    });
+  }
+
+  return unique(modules);
+}
+
 function estimateComplexity(inputPrompt: string, terms: string[], techStack: string[], quotedPhrases: string[]) {
   const lengthScore = Math.min(Math.floor(inputPrompt.length / 80), 4);
   const termScore = Math.min(Math.floor(terms.length / 2), 4);
@@ -590,6 +839,16 @@ function estimateComplexity(inputPrompt: string, terms: string[], techStack: str
 
 function listItems(items: string[]) {
   return items.map((item) => `- ${item}`).join("\n");
+}
+
+function formatModules(modules: DynamicModule[]) {
+  return modules
+    .map((module, index) => {
+      const focus = module.focus.join(" ");
+      const outputs = module.outputs.join(", ");
+      return `${index + 1}. ${module.title}: ${focus} Required outputs: ${outputs}.`;
+    })
+    .join("\n");
 }
 
 export function buildIntelligentPrompt({
@@ -614,6 +873,34 @@ export function buildIntelligentPrompt({
   const timeline = extractTimeline(lowered);
   const budget = extractBudget(lowered);
   const complexity = estimateComplexity(normalized, topicTerms, techStack, quotedPhrases);
+  const seed = hashString(`${normalized}|${domainId}|${intentId}|${plan}`);
+  const directiveTitle = buildDirectiveTitle(normalized);
+
+  const frames: PromptFrame[] = [
+    {
+      name: "Execution Blueprint",
+      objectiveLabel: "PRIMARY OBJECTIVE",
+      moduleLabel: "DYNAMIC EXECUTION MODULES",
+      phaseLabel: "EXECUTION PHASE PLAN",
+      deliverableLabel: "FINAL DELIVERABLES"
+    },
+    {
+      name: "Delivery Command Spec",
+      objectiveLabel: "OUTCOME TARGET",
+      moduleLabel: "WORK MODULES",
+      phaseLabel: "DELIVERY PHASES",
+      deliverableLabel: "REQUIRED OUTPUT ARTIFACTS"
+    },
+    {
+      name: "Operational Playbook",
+      objectiveLabel: "MISSION OBJECTIVE",
+      moduleLabel: "MISSION MODULES",
+      phaseLabel: "RUNBOOK PHASES",
+      deliverableLabel: "PRODUCTION DELIVERABLES"
+    }
+  ];
+
+  const frame = pickBySeed(frames, seed);
 
   const planDepthInstruction =
     plan === "pro"
@@ -652,8 +939,23 @@ export function buildIntelligentPrompt({
     constraints.push(`Respect stack preference: ${techStack.join(", ")}.`);
   }
 
+  const inferredModules = inferDynamicModules({
+    domainId,
+    intentId,
+    tokens,
+    topicTerms,
+    audience,
+    techStack
+  });
+
+  const maxModules = plan === "pro" ? 7 : 5;
+  const selectedModules = inferredModules.slice(0, maxModules);
+
   const dynamicWorkstreams = unique([
     ...profile.priorities,
+    ...selectedModules.map(
+      (module) => `Execute module "${module.title}" with complete outputs and acceptance criteria.`
+    ),
     intentId === "analyze" ? "Separate findings, interpretation, and recommendations." : "",
     intentId === "strategy" ? "Provide phased roadmap with owner-level accountability." : "",
     intentId === "content" ? "Define voice and structure before writing full output." : "",
@@ -673,17 +975,37 @@ export function buildIntelligentPrompt({
     "Post-launch optimization cycle"
   ].slice(0, phaseCount);
 
+  const selectedDeliverables = unique([
+    ...profile.deliverables,
+    ...selectedModules.flatMap((module) => module.outputs)
+  ]).slice(0, plan === "pro" ? 10 : 7);
+
+  const selectedQualityChecks = unique(
+    [
+      ...profile.qualityChecks,
+      ...selectedModules.map(
+        (module) => `Module "${module.title}" produces concrete artifacts instead of generic advice.`
+      ),
+      topicTerms.length > 0 ? `Output stays specific to: ${topicTerms.slice(0, 4).join(", ")}.` : ""
+    ].filter(Boolean)
+  ).slice(0, plan === "pro" ? 12 : 8);
+
   const contextLines = [
+    `Directive title: ${directiveTitle}`,
     `Original request: "${normalized}"`,
     `Detected domain: ${profile.label}`,
     `Detected intent: ${intentId === "general" ? "General execution" : sentenceCase(intentId)}`,
-    `Complexity profile: ${sentenceCase(complexity)}`
+    `Complexity profile: ${sentenceCase(complexity)}`,
+    `Response frame: ${frame.name}`
   ];
   if (topicTerms.length) {
     contextLines.push(`Key topic signals: ${topicTerms.join(", ")}`);
   }
   if (quotedPhrases.length) {
     contextLines.push(`Quoted requirements: ${quotedPhrases.join(" | ")}`);
+  }
+  if (selectedModules.length) {
+    contextLines.push(`Dynamic modules: ${selectedModules.map((module) => module.title).join(" | ")}`);
   }
 
   return `
@@ -692,6 +1014,9 @@ You are ${profile.role}.
 
 MISSION
 Execute the user request directly and deliver final, high-quality outputs. Do not produce a rewritten prompt for another AI.
+
+DOCUMENT FRAME
+${frame.name}
 
 CONTEXT SNAPSHOT
 ${listItems(contextLines)}
@@ -718,11 +1043,14 @@ ${listItems(constraints)}
 ASSUMPTIONS (IF REQUIRED)
 ${listItems(assumptions)}
 
-PRIMARY OBJECTIVE
+${frame.objectiveLabel}
 Begin with one concise objective statement focused on ${INTENT_OBJECTIVES[intentId]}, then execute it fully.
 
 REQUIREMENTS WORKSTREAMS
 ${listItems(selectedWorkstreams)}
+
+${frame.moduleLabel}
+${formatModules(selectedModules)}
 
 ARCHITECTURE / STRATEGY BLUEPRINT
 ${listItems(profile.architectureFocus)}
@@ -730,21 +1058,21 @@ ${listItems(profile.architectureFocus)}
 DATA / KNOWLEDGE DESIGN
 ${listItems(profile.dataFocus)}
 
-EXECUTION PHASE PLAN
+${frame.phaseLabel}
 ${listItems(executionPhases)}
 
 SECURITY, RISK, AND GOVERNANCE
 ${listItems(profile.riskControls)}
 
-FINAL DELIVERABLES
-${listItems(profile.deliverables)}
+${frame.deliverableLabel}
+${listItems(selectedDeliverables)}
 
 QUALITY VERIFICATION CHECKLIST
-${listItems(profile.qualityChecks)}
+${listItems(selectedQualityChecks)}
 
 OUTPUT FORMAT CONTRACT
 - Use markdown headings and numbered sections.
-- Include: Objective, Scope, Requirements, Execution Plan, Risks, Deliverables, Checklist.
+- Include: Objective, Scope, Requirements, Module Outputs, Execution Plan, Risks, Deliverables, Checklist.
 - Under each deliverable, produce complete final content (not instructions to produce content).
 - Do not include any prompt block, meta-prompt, or "prompt rewrite" section.
 - Do not ask clarifying questions unless a blocker prevents meaningful output.
