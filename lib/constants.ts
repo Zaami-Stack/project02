@@ -1,5 +1,5 @@
 export const APP_NAME = "Winklow";
-export const APP_TAGLINE = "Winklow turns rough ideas into premium prompts that ship serious AI outcomes.";
+export const APP_TAGLINE = "Winklow converts rough ideas into structured, production-ready prompts for advanced AI workflows.";
 export const FREE_DAILY_LIMIT = 10;
 export const PRO_MONTHLY_PRICE = 10;
 export const PAYPAL_ME_URL = "https://paypal.me/AnasZaami";

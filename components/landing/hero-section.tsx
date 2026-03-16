@@ -10,11 +10,11 @@ import { APP_TAGLINE, MARKETING_EXAMPLE } from "@/lib/constants";
 
 const loopingTags = [
   "Model-ready",
-  "Complex-output prompts",
+  "Enterprise prompting",
   "Structured instructions",
-  "Security-aware",
-  "Deploy-ready specs",
-  "Reusable templates"
+  "Security controls",
+  "Deployment specs",
+  "Reusable frameworks"
 ];
 
 export function HeroSection() {
@@ -37,10 +37,10 @@ export function HeroSection() {
               className="space-y-6"
             >
               <Badge variant="secondary" className="w-fit px-3 py-1 text-xs uppercase tracking-[0.18em]">
-                Winklow Winter Editions
+                Winklow Platform
               </Badge>
               <h1 className="max-w-4xl font-display text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl xl:text-7xl">
-                Crazy good prompts from one rough line.
+                Transform simple prompts into enterprise-grade AI instructions.
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">{APP_TAGLINE}</p>
             </motion.div>
@@ -58,7 +58,7 @@ export function HeroSection() {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="min-w-44">
-                <Link href="#editions">View animated slides</Link>
+                <Link href="#editions">Explore capabilities</Link>
               </Button>
             </motion.div>
 
@@ -70,8 +70,8 @@ export function HeroSection() {
             >
               {[
                 { icon: CheckCircle2, label: "No signup required" },
-                { icon: ShieldCheck, label: "Server-side abuse limits" },
-                { icon: Layers, label: "Slide-style launch UX" }
+                { icon: ShieldCheck, label: "Server-enforced protections" },
+                { icon: Layers, label: "Enterprise product experience" }
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="rounded-2xl border border-border/80 bg-card/80 px-4 py-3 shadow-sm backdrop-blur">
                   <div className="flex items-center gap-2">

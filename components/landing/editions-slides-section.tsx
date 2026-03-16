@@ -53,12 +53,12 @@ const slides: Slide[] = [
 ];
 
 const loopWords = [
-  "Fast briefs",
-  "Deep structure",
-  "Premium output",
-  "Launch ready",
+  "Enterprise workflows",
+  "Structured output",
+  "Security by default",
+  "Deployment guidance",
   "Prompt reliability",
-  "AI quality control"
+  "Operational quality"
 ];
 
 export function EditionsSlidesSection() {
@@ -77,14 +77,14 @@ export function EditionsSlidesSection() {
     <section id="editions" className="relative overflow-hidden py-20">
       <div className="container relative z-10 space-y-7">
         <Badge variant="secondary" className="px-3 py-1">
-          Winter Editions Style Experience
+          Product Capability Walkthrough
         </Badge>
         <div className="max-w-3xl space-y-4">
           <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-            Scroll-driven product story with cinematic slides.
+            Platform capabilities presented through a guided visual flow.
           </h2>
           <p className="text-lg leading-8 text-muted-foreground">
-            This section is built to feel like a launch keynote: immersive cards, sticky progression, fluid transitions, and high-contrast visuals.
+            Explore how Winklow structures prompts for architecture, security, and delivery with a focused, high-clarity interface.
           </p>
         </div>
         <div className="edition-marquee rounded-full border border-border/80 bg-card/75 py-2">
@@ -112,7 +112,7 @@ export function EditionsSlidesSection() {
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/20 bg-white/10">
                       <Icon className="h-6 w-6" />
                     </div>
-                    <p className="text-xs uppercase tracking-[0.16em] text-emerald-100/80">Winklow Editions</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-emerald-100/80">Winklow Platform</p>
                     <h3 className="font-display text-3xl font-semibold leading-tight">{title}</h3>
                     <p className="text-sm text-slate-200">{subtitle}</p>
                   </div>
@@ -141,7 +141,7 @@ export function EditionsSlidesSection() {
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10">
                           <Icon className="h-7 w-7" />
                         </div>
-                        <p className="text-sm uppercase tracking-[0.16em] text-emerald-100/80">Winklow Editions</p>
+                        <p className="text-sm uppercase tracking-[0.16em] text-emerald-100/80">Winklow Platform</p>
                         <h3 className="font-display text-4xl font-semibold leading-tight xl:text-5xl">{title}</h3>
                         <p className="max-w-3xl text-lg text-slate-200">{subtitle}</p>
                       </div>
@@ -195,7 +195,7 @@ export function EditionsSlidesSection() {
         </div>
         <div className="mt-8 flex justify-center">
           <Button asChild size="lg" variant="accent">
-            <Link href="/dashboard">Try the generator now</Link>
+            <Link href="/dashboard">Open prompt workspace</Link>
           </Button>
         </div>
       </div>
