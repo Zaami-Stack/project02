@@ -13,7 +13,7 @@ This version uses:
 - Next.js 14 + TypeScript
 - Tailwind CSS + shadcn-style UI
 - Supabase Postgres (service-role backend usage)
-- OpenAI API
+- Built-in server template generator (no external AI key)
 - Vercel deployment
 
 ## Main flow
@@ -46,8 +46,6 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE=
-OPENAI_API_KEY=
-OPENAI_MODEL=gpt-4.1-mini
 ```
 
 Notes:
@@ -129,4 +127,3 @@ Tips:
 - `GET /api/access/status` -> free/pro status
 - `POST /api/access/redeem` -> redeem private code
 - `POST /api/access/revoke` -> remove Pro from current device
-

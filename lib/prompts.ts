@@ -1,8 +1,8 @@
 import { revalidatePath } from "next/cache";
 
-import { DEFAULT_OPENAI_MODEL, FREE_DAILY_LIMIT, PROMPT_ENGINEERING_SYSTEM_MESSAGE } from "@/lib/constants";
+import { FREE_DAILY_LIMIT } from "@/lib/constants";
 import { UsageLimitError } from "@/lib/errors";
-import { getOpenAIClient } from "@/lib/openai";
+import { buildPremiumPrompt } from "@/lib/prompt-template";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { PlanTier, PromptGenerationResponse, PromptRecord, UsageSummary } from "@/lib/types";
 
@@ -120,29 +120,11 @@ export async function generatePremiumPrompt({
     throw new UsageLimitError(reason);
   }
 
-  const openai = getOpenAIClient();
-
   try {
-    const completion = await openai.chat.completions.create({
-      model: DEFAULT_OPENAI_MODEL,
-      temperature: usageGate.plan === "pro" ? 0.55 : 0.7,
-      messages: [
-        {
-          role: "system",
-          content: PROMPT_ENGINEERING_SYSTEM_MESSAGE
-        },
-        {
-          role: "user",
-          content: inputPrompt
-        }
-      ]
+    const generatedPrompt = buildPremiumPrompt({
+      inputPrompt,
+      plan: usageGate.plan
     });
-
-    const generatedPrompt = completion.choices[0]?.message?.content?.trim();
-
-    if (!generatedPrompt) {
-      throw new Error("The AI provider returned an empty prompt.");
-    }
 
     const { data: promptRow, error: promptError } = await supabase
       .from("prompts")
@@ -242,4 +224,3 @@ export async function setPromptFavorite({
 
   revalidatePath("/dashboard");
 }
-

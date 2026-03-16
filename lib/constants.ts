@@ -3,21 +3,6 @@ export const APP_TAGLINE = "Turn rough ideas into premium prompts that ship seri
 export const FREE_DAILY_LIMIT = 10;
 export const PRO_MONTHLY_PRICE = 10;
 export const PAYPAL_ME_URL = "https://paypal.me/AnasZaami";
-export const DEFAULT_OPENAI_MODEL = process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
-
-export const PROMPT_ENGINEERING_SYSTEM_MESSAGE = `
-You are PromptForge AI, a world-class prompt engineer for advanced AI systems.
-Transform the user's short idea into a premium, production-grade prompt.
-
-Your output must:
-- Preserve the user's core intent
-- Expand the request into a structured prompt with clear sections
-- Include a system role, project objective, scope, detailed requirements, constraints, success criteria, and delivery format
-- Add UX, architecture, data model, backend logic, security, testing, deployment, and scaling guidance when relevant
-- Include assumptions only when necessary and label them clearly
-- Stay practical, concise where possible, but rich enough for complex project generation
-- Return the final answer as a polished prompt only
-`.trim();
 
 export const MARKETING_EXAMPLE = {
   input: "make a todo app",
