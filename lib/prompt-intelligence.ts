@@ -52,6 +52,30 @@ type SectionLabelSet = {
   formatLabel: string;
 };
 
+type CompositionProfile = {
+  name: string;
+  styleInstruction: string;
+  sectionOrder: Array<
+    | "context"
+    | "rules"
+    | "responseMode"
+    | "constraints"
+    | "assumptions"
+    | "featureTargets"
+    | "objective"
+    | "workstreams"
+    | "modules"
+    | "architecture"
+    | "data"
+    | "phases"
+    | "risk"
+    | "deliverables"
+    | "quality"
+    | "format"
+  >;
+  finalCommand: string;
+};
+
 const DOMAIN_KEYWORDS: Record<DomainId, string[]> = {
   software: [
     "app",
@@ -947,6 +971,10 @@ function formatModules(modules: DynamicModule[]) {
     .join("\n");
 }
 
+function renderSection(title: string, content: string) {
+  return `${title}\n${content}`;
+}
+
 export function buildIntelligentPrompt({
   inputPrompt,
   plan,
@@ -1043,6 +1071,84 @@ export function buildIntelligentPrompt({
     }
   ];
   const sectionLabels = pickBySeed(sectionLabelSets, seed, 3);
+  const workstreamsLabel = pickBySeed(
+    ["REQUIREMENTS WORKSTREAMS", "EXECUTION WORKSTREAMS", "IMPLEMENTATION WORKSTREAMS"],
+    seed + 7
+  );
+  const featureTargetsLabel = pickBySeed(
+    ["FEATURE TARGETS", "PRODUCT TARGETS", "IMPLEMENTATION TARGETS"],
+    seed + 9
+  );
+
+  const compositionProfiles: CompositionProfile[] = [
+    {
+      name: "Directive Matrix",
+      styleInstruction: "Prefer concise directives with execution-first wording.",
+      sectionOrder: [
+        "context",
+        "rules",
+        "responseMode",
+        "constraints",
+        "assumptions",
+        "objective",
+        "workstreams",
+        "modules",
+        "architecture",
+        "data",
+        "phases",
+        "risk",
+        "deliverables",
+        "quality",
+        "format"
+      ],
+      finalCommand: "Execute now and return complete final artifacts."
+    },
+    {
+      name: "Delivery Spec",
+      styleInstruction: "Use delivery-spec tone with concrete outputs and measurable checkpoints.",
+      sectionOrder: [
+        "context",
+        "objective",
+        "constraints",
+        "responseMode",
+        "featureTargets",
+        "workstreams",
+        "modules",
+        "architecture",
+        "phases",
+        "data",
+        "deliverables",
+        "risk",
+        "quality",
+        "format",
+        "assumptions"
+      ],
+      finalCommand: "Deliver the finished result directly. No meta instructions."
+    },
+    {
+      name: "Execution Runbook",
+      styleInstruction: "Respond like an ops runbook with practical implementation decisions.",
+      sectionOrder: [
+        "context",
+        "responseMode",
+        "rules",
+        "objective",
+        "featureTargets",
+        "modules",
+        "workstreams",
+        "data",
+        "architecture",
+        "phases",
+        "risk",
+        "deliverables",
+        "quality",
+        "assumptions",
+        "format"
+      ],
+      finalCommand: "Run this plan and provide final outputs immediately."
+    }
+  ];
+  const compositionProfile = pickBySeed(compositionProfiles, seed + 13);
 
   const planDepthInstruction =
     plan === "pro"
@@ -1186,7 +1292,8 @@ export function buildIntelligentPrompt({
     `Detected domain: ${profile.label}`,
     `Detected intent: ${intentId === "general" ? "General execution" : sentenceCase(intentId)}`,
     `Complexity profile: ${sentenceCase(complexity)}`,
-    `Response frame: ${frame.name}`
+    `Response frame: ${frame.name}`,
+    `Composition profile: ${compositionProfile.name}`
   ];
   if (variationKey) {
     contextLines.push("Personalized composition mode: active");
@@ -1230,6 +1337,7 @@ export function buildIntelligentPrompt({
     "Use markdown headings and numbered sections.",
     "Include: Objective, Scope, Requirements, Module Outputs, Execution Plan, Risks, Deliverables, Checklist.",
     "Under each deliverable, produce complete final content (not instructions to produce content).",
+    compositionProfile.styleInstruction,
     responseToneLine,
     "Do not include any prompt block, meta-prompt, or \"prompt rewrite\" section.",
     "Do not ask clarifying questions unless a blocker prevents meaningful output.",
@@ -1241,75 +1349,58 @@ export function buildIntelligentPrompt({
       : [])
   ];
 
-  return `
-SYSTEM ROLE
-You are ${profile.role}.
+  const sectionBlocks = {
+    context: renderSection(sectionLabels.contextLabel, listItems(contextLines)),
+    rules: renderSection(
+      sectionLabels.rulesLabel,
+      listItems([
+        "Use precise, implementation-oriented language.",
+        "Keep sections structured and easy to execute.",
+        "Label assumptions and avoid hidden guesses.",
+        planDepthInstruction
+      ])
+    ),
+    responseMode: renderSection(
+      sectionLabels.responseModeLabel,
+      `${listItems([
+        "Return final deliverables directly, not a prompt template.",
+        "Do not output phrases like: 'Here is a prompt', 'Use this prompt', or 'Prompt for AI'.",
+        "Do not ask the user to copy/paste into another model; complete the work now.",
+        "If information is missing, state assumptions briefly and continue with the best professional result."
+      ])}${isSoftwareBuild ? `\n\nCODE-FIRST DELIVERY MODE\n${listItems(codeFirstRules)}` : ""}`
+    ),
+    constraints: renderSection(sectionLabels.constraintsLabel, listItems(constraints)),
+    assumptions: renderSection(sectionLabels.assumptionsLabel, listItems(assumptions)),
+    featureTargets: isSoftwareBuild
+      ? renderSection(featureTargetsLabel, listItems(softwareFeatureTargets))
+      : null,
+    objective: renderSection(
+      frame.objectiveLabel,
+      `Begin with one concise objective statement focused on ${INTENT_OBJECTIVES[intentId]}, then execute it fully.`
+    ),
+    workstreams: renderSection(workstreamsLabel, listItems(selectedWorkstreams)),
+    modules: renderSection(frame.moduleLabel, formatModules(selectedModules)),
+    architecture: renderSection(sectionLabels.architectureLabel, listItems(profile.architectureFocus)),
+    data: renderSection(sectionLabels.dataLabel, listItems(profile.dataFocus)),
+    phases: renderSection(frame.phaseLabel, listItems(executionPhases)),
+    risk: renderSection(sectionLabels.riskLabel, listItems(profile.riskControls)),
+    deliverables: renderSection(frame.deliverableLabel, listItems(selectedDeliverables)),
+    quality: renderSection(sectionLabels.qualityLabel, listItems(selectedQualityChecks)),
+    format: renderSection(sectionLabels.formatLabel, listItems(outputFormatContractLines))
+  } as const;
 
-MISSION
-Execute the user request directly and deliver final, high-quality outputs. Do not produce a rewritten prompt for another AI.
+  const openingBlocks = [
+    renderSection("SYSTEM ROLE", `You are ${profile.role}.`),
+    renderSection(
+      "MISSION",
+      "Execute the user request directly and deliver final, high-quality outputs. Do not produce a rewritten prompt for another AI."
+    ),
+    renderSection("DOCUMENT FRAME", `${frame.name}\nComposition: ${compositionProfile.name}`)
+  ];
 
-DOCUMENT FRAME
-${frame.name}
+  const orderedSections = compositionProfile.sectionOrder
+    .map((key) => sectionBlocks[key])
+    .filter((value): value is string => Boolean(value));
 
-${sectionLabels.contextLabel}
-${listItems(contextLines)}
-
-${sectionLabels.rulesLabel}
-${listItems([
-  "Use precise, implementation-oriented language.",
-  "Keep sections structured and easy to execute.",
-  "Label assumptions and avoid hidden guesses.",
-  planDepthInstruction
-])}
-
-${sectionLabels.responseModeLabel}
-${listItems([
-  "Return final deliverables directly, not a prompt template.",
-  "Do not output phrases like: 'Here is a prompt', 'Use this prompt', or 'Prompt for AI'.",
-  "Do not ask the user to copy/paste into another model; complete the work now.",
-  "If information is missing, state assumptions briefly and continue with the best professional result."
-])}
-
-${isSoftwareBuild ? `CODE-FIRST DELIVERY MODE\n${listItems(codeFirstRules)}\n` : ""}
-
-${sectionLabels.constraintsLabel}
-${listItems(constraints)}
-
-${sectionLabels.assumptionsLabel}
-${listItems(assumptions)}
-
-${isSoftwareBuild ? `FEATURE TARGETS\n${listItems(softwareFeatureTargets)}\n` : ""}
-
-${frame.objectiveLabel}
-Begin with one concise objective statement focused on ${INTENT_OBJECTIVES[intentId]}, then execute it fully.
-
-REQUIREMENTS WORKSTREAMS
-${listItems(selectedWorkstreams)}
-
-${frame.moduleLabel}
-${formatModules(selectedModules)}
-
-${sectionLabels.architectureLabel}
-${listItems(profile.architectureFocus)}
-
-${sectionLabels.dataLabel}
-${listItems(profile.dataFocus)}
-
-${frame.phaseLabel}
-${listItems(executionPhases)}
-
-${sectionLabels.riskLabel}
-${listItems(profile.riskControls)}
-
-${frame.deliverableLabel}
-${listItems(selectedDeliverables)}
-
-${sectionLabels.qualityLabel}
-${listItems(selectedQualityChecks)}
-
-${sectionLabels.formatLabel}
-${listItems(outputFormatContractLines)}
-
-Now execute the request and return the final deliverables.
-`.trim();
+  return [...openingBlocks, ...orderedSections, compositionProfile.finalCommand].join("\n\n").trim();
 }
