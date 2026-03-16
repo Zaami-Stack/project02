@@ -123,7 +123,8 @@ export async function generatePremiumPrompt({
   try {
     const generatedPrompt = buildIntelligentPrompt({
       inputPrompt,
-      plan: usageGate.plan
+      plan: usageGate.plan,
+      variationKey: `${fingerprint}:${usageGate.log_id}`
     });
 
     const { data: promptRow, error: promptError } = await supabase

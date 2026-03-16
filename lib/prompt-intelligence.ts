@@ -39,6 +39,19 @@ type PromptFrame = {
   deliverableLabel: string;
 };
 
+type SectionLabelSet = {
+  contextLabel: string;
+  rulesLabel: string;
+  responseModeLabel: string;
+  constraintsLabel: string;
+  assumptionsLabel: string;
+  architectureLabel: string;
+  dataLabel: string;
+  riskLabel: string;
+  qualityLabel: string;
+  formatLabel: string;
+};
+
 const DOMAIN_KEYWORDS: Record<DomainId, string[]> = {
   software: [
     "app",
@@ -613,6 +626,25 @@ function pickBySeed<T>(items: T[], seed: number, offset = 0) {
   return items[(seed + offset) % items.length];
 }
 
+function shuffleBySeed<T>(items: T[], seed: number) {
+  const result = [...items];
+  let state = seed || 1;
+
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    const target = state % (index + 1);
+    const current = result[index];
+    result[index] = result[target];
+    result[target] = current;
+  }
+
+  return result;
+}
+
+function pickManyBySeed<T>(items: T[], count: number, seed: number) {
+  return shuffleBySeed(items, seed).slice(0, Math.max(0, count));
+}
+
 function hasAnyToken(tokens: string[], values: string[]) {
   return values.some((value) => tokens.includes(value));
 }
@@ -621,6 +653,50 @@ function buildDirectiveTitle(inputPrompt: string) {
   const normalized = cleanWhitespace(inputPrompt).replace(/[^\w\s:/,+.-]/g, "");
   const title = sentenceCase(normalized);
   return title.length > 90 ? `${title.slice(0, 87)}...` : title;
+}
+
+function inferSoftwareFeatureTargets(tokens: string[], topicTerms: string[]) {
+  const features: string[] = [];
+  const topicSummary = topicTerms.length > 0 ? topicTerms.slice(0, 3).join(", ") : "the requested product";
+
+  if (hasAnyToken(tokens, ["todo", "task", "tasks"])) {
+    features.push("Task CRUD flow with create, update, complete, and delete actions.");
+    features.push("Task filters (all, active, completed) with accurate counters.");
+  }
+  if (hasAnyToken(tokens, ["auth", "login", "signup", "account", "user"])) {
+    features.push("Authentication flow with protected resources and role boundaries.");
+  }
+  if (hasAnyToken(tokens, ["api", "backend", "server"])) {
+    features.push("Validated API layer with structured error handling.");
+  }
+  if (hasAnyToken(tokens, ["dashboard", "analytics", "kpi"])) {
+    features.push("Dashboard widgets and summary insights for key activity.");
+  }
+  if (hasAnyToken(tokens, ["mobile", "responsive"])) {
+    features.push("Responsive layout quality across phone, tablet, and desktop.");
+  }
+  if (hasAnyToken(tokens, ["search", "filter", "sort"])) {
+    features.push("Search, filter, and sort interaction model with low-latency UX.");
+  }
+  if (hasAnyToken(tokens, ["payment", "billing", "subscription", "paypal", "stripe"])) {
+    features.push("Payment and subscription lifecycle with webhook-safe state handling.");
+  }
+
+  if (features.length === 0) {
+    features.push(`Complete MVP implementation focused on ${topicSummary}.`);
+    features.push("Clear UI interactions, persistence, and production-safe defaults.");
+  }
+
+  return unique(features).slice(0, 6);
+}
+
+function chooseSoftwareStack(seed: number) {
+  const presets = [
+    "Next.js 14 + TypeScript + TailwindCSS + Supabase Postgres",
+    "React + TypeScript + Vite + Node.js API + PostgreSQL",
+    "Next.js App Router + Prisma + Postgres + TailwindCSS"
+  ];
+  return pickBySeed(presets, seed + 11);
 }
 
 function inferDynamicModules({
@@ -873,10 +949,12 @@ function formatModules(modules: DynamicModule[]) {
 
 export function buildIntelligentPrompt({
   inputPrompt,
-  plan
+  plan,
+  variationKey
 }: {
   inputPrompt: string;
   plan: PlanTier;
+  variationKey?: string;
 }) {
   const normalized = cleanWhitespace(inputPrompt);
   const lowered = normalized.toLowerCase();
@@ -895,8 +973,10 @@ export function buildIntelligentPrompt({
   const complexity = estimateComplexity(normalized, topicTerms, techStack, quotedPhrases);
   const isSoftwareBuild = domainId === "software" && intentId === "build";
   const isSmallProductBuild = isSoftwareBuild && hasAnyToken(tokens, ["app", "todo", "task", "tasks", "dashboard", "website"]);
-  const seed = hashString(`${normalized}|${domainId}|${intentId}|${plan}`);
+  const seed = hashString(`${normalized}|${domainId}|${intentId}|${plan}|${variationKey ?? ""}`);
   const directiveTitle = buildDirectiveTitle(normalized);
+  const inferredStack = isSoftwareBuild ? (techStack.length > 0 ? techStack.join(", ") : chooseSoftwareStack(seed)) : null;
+  const softwareFeatureTargets = isSoftwareBuild ? inferSoftwareFeatureTargets(tokens, topicTerms) : [];
 
   const frames: PromptFrame[] = [
     {
@@ -923,6 +1003,46 @@ export function buildIntelligentPrompt({
   ];
 
   const frame = pickBySeed(frames, seed);
+
+  const sectionLabelSets: SectionLabelSet[] = [
+    {
+      contextLabel: "CONTEXT SNAPSHOT",
+      rulesLabel: "OPERATING RULES",
+      responseModeLabel: "NON-NEGOTIABLE RESPONSE MODE",
+      constraintsLabel: "MANDATORY CONSTRAINTS",
+      assumptionsLabel: "ASSUMPTIONS (IF REQUIRED)",
+      architectureLabel: "ARCHITECTURE / STRATEGY BLUEPRINT",
+      dataLabel: "DATA / KNOWLEDGE DESIGN",
+      riskLabel: "SECURITY, RISK, AND GOVERNANCE",
+      qualityLabel: "QUALITY VERIFICATION CHECKLIST",
+      formatLabel: "OUTPUT FORMAT CONTRACT"
+    },
+    {
+      contextLabel: "REQUEST INTELLIGENCE SUMMARY",
+      rulesLabel: "EXECUTION RULEBOOK",
+      responseModeLabel: "RESPONSE COMPLIANCE MODE",
+      constraintsLabel: "DELIVERY CONSTRAINTS",
+      assumptionsLabel: "ASSUMPTION LOG",
+      architectureLabel: "SOLUTION DESIGN MAP",
+      dataLabel: "INFORMATION AND DATA MODEL",
+      riskLabel: "RISK, SECURITY, AND CONTROLS",
+      qualityLabel: "QUALITY ASSURANCE GATES",
+      formatLabel: "RESPONSE OUTPUT SPEC"
+    },
+    {
+      contextLabel: "MISSION CONTEXT",
+      rulesLabel: "OPERATING DIRECTIVES",
+      responseModeLabel: "STRICT EXECUTION MODE",
+      constraintsLabel: "BOUNDARY CONDITIONS",
+      assumptionsLabel: "DECLARED ASSUMPTIONS",
+      architectureLabel: "DESIGN BLUEPRINT",
+      dataLabel: "KNOWLEDGE AND DATA STRUCTURE",
+      riskLabel: "RISK GOVERNANCE",
+      qualityLabel: "FINAL QUALITY CHECKS",
+      formatLabel: "FINAL RESPONSE CONTRACT"
+    }
+  ];
+  const sectionLabels = pickBySeed(sectionLabelSets, seed, 3);
 
   const planDepthInstruction =
     plan === "pro"
@@ -959,6 +1079,8 @@ export function buildIntelligentPrompt({
   }
   if (techStack.length) {
     constraints.push(`Respect stack preference: ${techStack.join(", ")}.`);
+  } else if (isSoftwareBuild && inferredStack) {
+    constraints.push(`Use this implementation baseline stack: ${inferredStack}.`);
   }
   if (isSoftwareBuild) {
     constraints.push("For build requests, produce executable code artifacts, not strategy-only output.");
@@ -974,10 +1096,11 @@ export function buildIntelligentPrompt({
   });
 
   const maxModules = plan === "pro" ? 7 : 5;
-  const selectedModules = inferredModules.slice(0, maxModules);
+  const selectedModules = pickManyBySeed(inferredModules, maxModules, seed + 21);
 
   const dynamicWorkstreams = unique([
     ...profile.priorities,
+    ...softwareFeatureTargets.map((feature) => `Implement feature target: ${feature}`),
     ...selectedModules.map(
       (module) => `Execute module "${module.title}" with complete outputs and acceptance criteria.`
     ),
@@ -988,42 +1111,74 @@ export function buildIntelligentPrompt({
   ]).filter(Boolean);
 
   const maxWorkstreams = plan === "pro" ? 8 : 5;
-  const selectedWorkstreams = dynamicWorkstreams.slice(0, maxWorkstreams);
+  const selectedWorkstreams = pickManyBySeed(dynamicWorkstreams, maxWorkstreams, seed + 43);
 
   const phaseCount = plan === "pro" ? 6 : 4;
-  const executionPhases = [
-    "Discovery and constraint clarification",
-    "Architecture/strategy design",
-    "Detailed implementation plan",
-    "Validation, risk checks, and quality assurance",
-    "Deployment/rollout and monitoring",
-    "Post-launch optimization cycle"
-  ].slice(0, phaseCount);
+  const phaseBlueprints = [
+    [
+      "Discovery and constraint clarification",
+      "Architecture and system design",
+      "Detailed implementation buildout",
+      "Validation, testing, and quality hardening",
+      "Deployment, monitoring, and rollback readiness",
+      "Post-launch optimization cycle"
+    ],
+    [
+      "Outcome framing and scope lock",
+      "Solution modeling and interface contracts",
+      "Build and integrate core components",
+      "Run verification gates and edge-case checks",
+      "Release with observability and incident controls",
+      "Iterate based on real usage feedback"
+    ],
+    [
+      "Requirements distillation",
+      "Structure and module planning",
+      "Execution and artifact production",
+      "Risk control and acceptance validation",
+      "Go-live and operational stabilization",
+      "Continuous improvement loop"
+    ]
+  ];
+  const executionPhases = pickBySeed(phaseBlueprints, seed + 61).slice(0, phaseCount);
 
-  const selectedDeliverables = unique([
-    ...(isSoftwareBuild
-      ? [
-          "Project file tree",
-          "Complete runnable source code for all files",
-          "Installation and run commands",
-          "Environment variables template",
-          "Testing instructions and sample test cases"
-        ]
-      : []),
+  const deliverableLimit = plan === "pro" ? 10 : 7;
+  const softwareBaseDeliverables = [
+    "Project file tree",
+    "Complete runnable source code for all files",
+    "Installation and run commands",
+    "Environment variables template",
+    "Testing instructions and sample test cases"
+  ];
+  const allDeliverables = unique([
     ...profile.deliverables,
-    ...selectedModules.flatMap((module) => module.outputs)
-  ]).slice(0, plan === "pro" ? 10 : 7);
+    ...selectedModules.flatMap((module) => module.outputs),
+    ...softwareFeatureTargets.map((feature) => `Implemented feature artifact: ${feature}`)
+  ]);
 
-  const selectedQualityChecks = unique(
+  const selectedDeliverables = isSoftwareBuild
+    ? [
+        ...softwareBaseDeliverables,
+        ...pickManyBySeed(
+          allDeliverables.filter((item) => !softwareBaseDeliverables.includes(item)),
+          Math.max(0, deliverableLimit - softwareBaseDeliverables.length),
+          seed + 79
+        )
+      ]
+    : pickManyBySeed(allDeliverables, deliverableLimit, seed + 79);
+
+  const allQualityChecks = unique(
     [
       ...profile.qualityChecks,
       ...selectedModules.map(
         (module) => `Module "${module.title}" produces concrete artifacts instead of generic advice.`
       ),
+      ...softwareFeatureTargets.map((feature) => `Feature target satisfied: ${feature}`),
       isSoftwareBuild ? "Code output is complete, runnable, and contains no TODO placeholders." : "",
       topicTerms.length > 0 ? `Output stays specific to: ${topicTerms.slice(0, 4).join(", ")}.` : ""
     ].filter(Boolean)
-  ).slice(0, plan === "pro" ? 12 : 8);
+  );
+  const selectedQualityChecks = pickManyBySeed(allQualityChecks, plan === "pro" ? 12 : 8, seed + 97);
 
   const contextLines = [
     `Directive title: ${directiveTitle}`,
@@ -1033,6 +1188,9 @@ export function buildIntelligentPrompt({
     `Complexity profile: ${sentenceCase(complexity)}`,
     `Response frame: ${frame.name}`
   ];
+  if (variationKey) {
+    contextLines.push("Personalized composition mode: active");
+  }
   if (topicTerms.length) {
     contextLines.push(`Key topic signals: ${topicTerms.join(", ")}`);
   }
@@ -1042,6 +1200,9 @@ export function buildIntelligentPrompt({
   if (selectedModules.length) {
     contextLines.push(`Dynamic modules: ${selectedModules.map((module) => module.title).join(" | ")}`);
   }
+  if (isSoftwareBuild && inferredStack) {
+    contextLines.push(`Implementation stack baseline: ${inferredStack}`);
+  }
 
   const codeFirstRules = isSoftwareBuild
     ? [
@@ -1049,16 +1210,27 @@ export function buildIntelligentPrompt({
         "Never stop at roadmap-only or blueprint-only responses when the user asks to build/create/develop.",
         "Use full file contents with language-tagged code fences and explicit file paths.",
         "Do not omit critical files (entrypoint, config, data schema, core components, and setup instructions).",
+        `Prioritize these feature targets: ${softwareFeatureTargets.join(" | ")}.`,
         isSmallProductBuild
           ? "For small products (for example todo/task apps), return a compact but fully working MVP in one response."
           : "For larger products, provide complete foundational files plus a clear continuation plan for optional advanced modules."
       ]
     : [];
 
+  const responseToneLine = pickBySeed(
+    [
+      "Keep the response practical and execution-heavy; avoid theory-first detours.",
+      "Favor concrete implementation details and explicit decisions over abstract guidance.",
+      "Respond like a delivery lead finalizing production-ready output."
+    ],
+    seed + 101
+  );
+
   const outputFormatContractLines = [
     "Use markdown headings and numbered sections.",
     "Include: Objective, Scope, Requirements, Module Outputs, Execution Plan, Risks, Deliverables, Checklist.",
     "Under each deliverable, produce complete final content (not instructions to produce content).",
+    responseToneLine,
     "Do not include any prompt block, meta-prompt, or \"prompt rewrite\" section.",
     "Do not ask clarifying questions unless a blocker prevents meaningful output.",
     ...(isSoftwareBuild
@@ -1079,10 +1251,10 @@ Execute the user request directly and deliver final, high-quality outputs. Do no
 DOCUMENT FRAME
 ${frame.name}
 
-CONTEXT SNAPSHOT
+${sectionLabels.contextLabel}
 ${listItems(contextLines)}
 
-OPERATING RULES
+${sectionLabels.rulesLabel}
 ${listItems([
   "Use precise, implementation-oriented language.",
   "Keep sections structured and easy to execute.",
@@ -1090,7 +1262,7 @@ ${listItems([
   planDepthInstruction
 ])}
 
-NON-NEGOTIABLE RESPONSE MODE
+${sectionLabels.responseModeLabel}
 ${listItems([
   "Return final deliverables directly, not a prompt template.",
   "Do not output phrases like: 'Here is a prompt', 'Use this prompt', or 'Prompt for AI'.",
@@ -1100,11 +1272,13 @@ ${listItems([
 
 ${isSoftwareBuild ? `CODE-FIRST DELIVERY MODE\n${listItems(codeFirstRules)}\n` : ""}
 
-MANDATORY CONSTRAINTS
+${sectionLabels.constraintsLabel}
 ${listItems(constraints)}
 
-ASSUMPTIONS (IF REQUIRED)
+${sectionLabels.assumptionsLabel}
 ${listItems(assumptions)}
+
+${isSoftwareBuild ? `FEATURE TARGETS\n${listItems(softwareFeatureTargets)}\n` : ""}
 
 ${frame.objectiveLabel}
 Begin with one concise objective statement focused on ${INTENT_OBJECTIVES[intentId]}, then execute it fully.
@@ -1115,25 +1289,25 @@ ${listItems(selectedWorkstreams)}
 ${frame.moduleLabel}
 ${formatModules(selectedModules)}
 
-ARCHITECTURE / STRATEGY BLUEPRINT
+${sectionLabels.architectureLabel}
 ${listItems(profile.architectureFocus)}
 
-DATA / KNOWLEDGE DESIGN
+${sectionLabels.dataLabel}
 ${listItems(profile.dataFocus)}
 
 ${frame.phaseLabel}
 ${listItems(executionPhases)}
 
-SECURITY, RISK, AND GOVERNANCE
+${sectionLabels.riskLabel}
 ${listItems(profile.riskControls)}
 
 ${frame.deliverableLabel}
 ${listItems(selectedDeliverables)}
 
-QUALITY VERIFICATION CHECKLIST
+${sectionLabels.qualityLabel}
 ${listItems(selectedQualityChecks)}
 
-OUTPUT FORMAT CONTRACT
+${sectionLabels.formatLabel}
 ${listItems(outputFormatContractLines)}
 
 Now execute the request and return the final deliverables.
