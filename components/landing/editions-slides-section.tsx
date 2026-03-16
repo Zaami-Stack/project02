@@ -98,7 +98,7 @@ export function EditionsSlidesSection() {
         </div>
       </div>
 
-      <div ref={desktopRef} className="relative mt-10 hidden lg:block" style={{ height: `${slides.length * 78}vh` }}>
+      <div ref={desktopRef} className="relative mt-10 hidden lg:block" style={{ height: `${slides.length * 74}vh` }}>
         <div className="sticky top-20 h-[calc(100vh-5rem)] overflow-hidden">
           <div className="pointer-events-none absolute inset-0 edition-backdrop" />
           {prefersReducedMotion ? (
@@ -133,23 +133,23 @@ export function EditionsSlidesSection() {
             <>
               <motion.div style={{ x, width: `${slides.length * 100}%` }} className="flex h-full will-change-transform">
                 {slides.map(({ icon: Icon, title, subtitle, description, chips }) => (
-                  <article key={title} className="h-full shrink-0 px-6 py-6 xl:px-8" style={{ width: `${100 / slides.length}%` }}>
-                    <div className="slide-card mx-auto flex h-full w-full max-w-6xl flex-col justify-between overflow-y-auto rounded-[2rem] border border-white/25 bg-slate-950/85 p-7 text-white shadow-[0_45px_90px_-35px_rgba(15,23,42,0.9)] backdrop-blur-xl xl:p-9">
+                  <article key={title} className="h-full shrink-0 px-5 py-5 xl:px-7" style={{ width: `${100 / slides.length}%` }}>
+                    <div className="slide-card mx-auto flex h-full w-full max-w-6xl flex-col justify-between overflow-hidden rounded-[2rem] border border-white/25 bg-slate-950/85 p-6 text-white shadow-[0_45px_90px_-35px_rgba(15,23,42,0.9)] backdrop-blur-xl xl:p-7">
                       <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" />
                       <div className="absolute -bottom-20 left-0 h-64 w-64 rounded-full bg-sky-300/25 blur-3xl" />
-                      <div className="space-y-6">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10">
-                          <Icon className="h-7 w-7" />
+                      <div className="space-y-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/20 bg-white/10">
+                          <Icon className="h-6 w-6" />
                         </div>
                         <p className="text-sm uppercase tracking-[0.16em] text-emerald-100/80">Winklow Platform</p>
-                        <h3 className="font-display text-4xl font-semibold leading-tight xl:text-5xl">{title}</h3>
-                        <p className="max-w-3xl text-lg text-slate-200">{subtitle}</p>
+                        <h3 className="font-display text-3xl font-semibold leading-tight xl:text-4xl">{title}</h3>
+                        <p className="max-w-3xl text-base text-slate-200">{subtitle}</p>
                       </div>
-                      <div className="grid gap-8 xl:grid-cols-[1.3fr_0.7fr]">
-                        <p className="text-base leading-8 text-slate-200">{description}</p>
+                      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+                        <p className="text-sm leading-7 text-slate-200">{description}</p>
                         <div className="grid gap-3">
                           {chips.map((chip) => (
-                            <div key={chip} className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-medium">
+                            <div key={chip} className="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold">
                               {chip}
                             </div>
                           ))}
