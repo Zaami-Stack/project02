@@ -27,6 +27,15 @@ export function SiteFooter() {
           <Link href="/dashboard" className="transition-colors hover:text-foreground">
             Dashboard
           </Link>
+          <Link href="/privacy" className="transition-colors hover:text-foreground">
+            Privacy
+          </Link>
+          <Link href="/terms" className="transition-colors hover:text-foreground">
+            Terms
+          </Link>
+          <Link href="/contact" className="transition-colors hover:text-foreground">
+            Contact
+          </Link>
         </div>
       </div>
       <div className="container mt-7 text-xs uppercase tracking-[0.12em] text-muted-foreground">
