@@ -18,7 +18,7 @@ const syne = Syne({
 });
 
 const ADSENSE_PUBLISHER_ID =
-  process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? "ca-pub-7336372781083421";
+  process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID?.trim() || undefined;
 const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 function getMetadataBase() {
@@ -96,9 +96,11 @@ export const metadata: Metadata = {
       "max-snippet": -1
     }
   },
-  other: {
-    "google-adsense-account": ADSENSE_PUBLISHER_ID
-  }
+  other: ADSENSE_PUBLISHER_ID
+    ? {
+        "google-adsense-account": ADSENSE_PUBLISHER_ID
+      }
+    : undefined
 };
 
 export default function RootLayout({
@@ -108,13 +110,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
-          crossOrigin="anonymous"
-        />
-      </head>
+      <head />
       <body className={`${manrope.variable} ${syne.variable} font-sans`}>
         <AppProviders>
           <div className="relative min-h-screen">

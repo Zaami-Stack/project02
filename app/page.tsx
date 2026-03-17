@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 
 import { FaqSection } from "@/components/landing/faq-section";
 import { FeaturesSection } from "@/components/landing/features-section";
@@ -22,10 +23,12 @@ export const metadata: Metadata = {
 export default function HomePage() {
   const siteUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://winklow.vercel.app").replace(/\/$/, "");
   const siteLogo = `${siteUrl}/icon.svg`;
-  const topAdSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME_TOP;
-  const middleAdSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME_MIDDLE;
+  const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID?.trim();
+  const topAdSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME_TOP?.trim();
+  const middleAdSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME_MIDDLE?.trim();
   const shouldRenderTopAd = Boolean(topAdSlot);
   const shouldRenderMiddleAd = Boolean(middleAdSlot);
+  const shouldLoadAdsScript = Boolean(publisherId && (shouldRenderTopAd || shouldRenderMiddleAd));
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -95,6 +98,15 @@ export default function HomePage() {
 
   return (
     <>
+      {shouldLoadAdsScript ? (
+        <Script
+          id="adsense-script-home"
+          async
+          strategy="afterInteractive"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
+          crossOrigin="anonymous"
+        />
+      ) : null}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
